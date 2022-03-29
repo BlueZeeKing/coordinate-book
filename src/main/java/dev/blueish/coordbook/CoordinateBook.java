@@ -12,11 +12,12 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.screen.ingame.BookScreen;
+import net.minecraft.util.Formatting;
 import net.minecraft.text.StringVisitable;
 
 import dev.blueish.coordbook.gui.ListScreen;
 import dev.blueish.coordbook.util.Contents;
+import dev.blueish.coordbook.util.Text;
 
 
 public class CoordinateBook implements ClientModInitializer {
@@ -37,8 +38,10 @@ public class CoordinateBook implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (open.wasPressed()) {
 				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
-				client.setScreen(new ListScreen(new Contents(new ArrayList<StringVisitable>(Arrays.asList(StringVisitable.plain("hi"), 
-						StringVisitable.plain("2"))))));
+				client.setScreen(new ListScreen(new Contents(new ArrayList<StringVisitable>(Arrays.asList(
+					new Text("Page One").format(Formatting.AQUA).raw(),
+					new Text("Page Two").format(Formatting.DARK_RED).hover("hey there").click("copy!").raw()
+				)))));
 			}
 		});
 

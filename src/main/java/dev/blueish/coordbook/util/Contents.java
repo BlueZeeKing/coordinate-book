@@ -1,7 +1,6 @@
 package dev.blueish.coordbook.util;
 
 import net.minecraft.text.StringVisitable;
-import dev.blueish.coordbook.CoordinateBook;
 
 import java.util.ArrayList;
 

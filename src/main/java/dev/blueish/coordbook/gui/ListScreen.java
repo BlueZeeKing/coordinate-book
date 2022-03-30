@@ -23,7 +23,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import dev.blueish.coordbook.util.Contents;
+import dev.blueish.coordbook.util.Book;
 
 @Environment(value=EnvType.CLIENT)
 public class ListScreen
@@ -36,7 +36,7 @@ extends Screen {
     protected static final int MAX_TEXT_HEIGHT = 128;
     protected static final int WIDTH = 192;
     protected static final int HEIGHT = 192;
-    private Contents contents;
+    private Book contents;
     private int pageIndex;
     private List<OrderedText> cachedPage = Collections.emptyList();
     private int cachedPageIndex = -1;
@@ -45,18 +45,18 @@ extends Screen {
     private PageTurnWidget previousPageButton;
     private final boolean pageTurnSound;
 
-    public ListScreen(Contents pageProvider) {
+    public ListScreen(Book pageProvider) {
         this(pageProvider, true);
     }
 
-    private ListScreen(Contents contents, boolean playPageTurnSound) {
+    private ListScreen(Book contents, boolean playPageTurnSound) {
         super(NarratorManager.EMPTY);
         this.contents = contents;
         this.pageTurnSound = playPageTurnSound;
     }
 
     public boolean setPage(int index) {
-        int i = MathHelper.clamp(index, 0, this.contents.getPageCount() - 1);
+        int i = MathHelper.clamp(index, 0, this.contents.pageCount - 1);
         if (i != this.pageIndex) {
             this.pageIndex = i;
             this.updatePageButtons();
@@ -89,7 +89,7 @@ extends Screen {
     }
 
     private int getPageCount() {
-        return this.contents.getPageCount();
+        return this.contents.pageCount;
     }
 
     protected void goToPreviousPage() {

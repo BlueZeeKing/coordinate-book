@@ -5,6 +5,7 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
+import java.lang.Math;
 
 public class Text {
   private MutableText text;
@@ -54,6 +55,11 @@ public class Text {
 
   public Text filler(String symbol) {
     text.append(new LiteralText(" " + Formatting.RESET + Formatting.DARK_GRAY + symbol + Formatting.RESET + " "));
+    return this;
+  }
+
+  public Text center() {
+    this.text = new LiteralText(new String(new char[Math.round((19 - text.asString().length())/2)]).replace("\0", " ")).append(text);
     return this;
   }
 

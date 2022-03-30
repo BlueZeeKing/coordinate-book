@@ -16,8 +16,10 @@ import net.minecraft.util.Formatting;
 import net.minecraft.text.StringVisitable;
 
 import dev.blueish.coordbook.gui.ListScreen;
-import dev.blueish.coordbook.util.Contents;
+import dev.blueish.coordbook.util.Book;
 import dev.blueish.coordbook.util.Text;
+import dev.blueish.coordbook.util.Coord;
+import dev.blueish.coordbook.util.Position;
 
 
 public class CoordinateBook implements ClientModInitializer {
@@ -38,10 +40,8 @@ public class CoordinateBook implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (open.wasPressed()) {
 				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
-				client.setScreen(new ListScreen(new Contents(new ArrayList<StringVisitable>(Arrays.asList(
-					new Text("Page One").format(Formatting.AQUA).raw(),
-					new Text("Page Two").format(Formatting.DARK_RED).hover("hey there").click("copy!").raw()
-				)))));
+				client.setScreen(new ListScreen(new Book(1)));
+				new Coord(new Position(0, 100, 0), "hi", Formatting.AQUA, "overworld");
 			}
 		});
 

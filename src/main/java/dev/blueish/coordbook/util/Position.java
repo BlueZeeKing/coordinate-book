@@ -13,6 +13,12 @@ public class Position {
     this.z = z;
   }
 
+  public Position(double x, double y, double z) {
+    this.x = (int)x;
+    this.y = (int)y;
+    this.z = (int)z;
+  }
+
   public Position(JSONObject obj) {
     this.x = obj.getInt("x");
     this.y = obj.getInt("y");

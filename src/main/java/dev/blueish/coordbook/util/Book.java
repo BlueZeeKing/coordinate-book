@@ -16,7 +16,14 @@ public class Book {
 
   public MutableText getPage(int index) {
     if (index == 0) {
-      return new Text("Coordinate Book").center().format(Formatting.BOLD).addNewline(file.getAll().get(0).getText()).raw();
+      TextCreator content = new TextCreator("Coordinate Book").center();
+      ArrayList<Coord> coords = file.getAll();
+
+      for (int i = 0; i < Math.min(coords.size(), 15); i++) {
+        content.addNewline(coords.get(i).getText());
+      }
+
+      return content.raw();
     }
     return null;
   }

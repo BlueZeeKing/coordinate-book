@@ -42,6 +42,6 @@ public class Coord {
 
   public MutableText getText() {
     CoordinateBook.LOGGER.info(name);
-    return new Text(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z)).raw();
+    return new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z)).raw();
   }
 }

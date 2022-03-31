@@ -33,6 +33,18 @@ public class Text {
     return this;
   }
 
+  public Text addNewline(MutableText message) {
+    text.append("\n");
+    text.append(message);
+    return this;
+  }
+
+  public Text addNewline(Text message) {
+    text.append("\n");
+    text.append(message.raw());
+    return this;
+  }
+
   public Text format(Formatting... format) {
     text.formatted(format);
     return this;

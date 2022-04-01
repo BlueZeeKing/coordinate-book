@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.NarratorManager;
+import net.minecraft.client.util.SelectionManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
@@ -22,10 +23,12 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.SharedConstants;
 
 import dev.blueish.coordbook.util.TextCreator;
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.util.Position;
+import dev.blueish.coordbook.util.Coord;
 
 @Environment(value=EnvType.CLIENT)
 public class CreateScreen
@@ -45,15 +48,15 @@ extends Screen {
 
     private Position coords;
     private String name = "";
+    private String color = "";
+    private boolean cursorVisible = false; 
 
     private Position cursor;
-    private int line;
 
     public CreateScreen(Position coords) {
         super(NarratorManager.EMPTY);
         this.coords = coords;
-        this.cursor = new Position(10, 10, 10);
-        this.line = 2;
+        this.cursor = new Position(0, 2, 0);
     }
 
     @Override
@@ -62,12 +65,71 @@ extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, button -> this.client.setScreen(null)));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color), this.client.player.getWorld().getRegistryKey().getValue().toString()); }));
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        switch (keyCode) {
+            case 261:
+            case 259: {
+                if (cursor.x > 0 && cursorVisible) {
+                    if (cursor.y == 1) {
+                        this.name = new StringBuilder(name).deleteCharAt(cursor.x-1).toString();
+                    } else if (cursor.y == 2) {
+                        this.color = new StringBuilder(color).deleteCharAt(cursor.x-1).toString();
+                    }
+                    cursor.x--;
+                    this.cachedPageIndex = -1;
+                }
+                return true;
+            }
+            case 263: {
+                if (cursor.x > 0) {
+                    cursor.x--;
+                }
+                return true;
+            }
+            case 262: {
+                if (cursor.x < (cursor.y == 1 ? name : color).length()) {
+                    cursor.x++;
+                }
+                return true;
+            }
+            case 265: {
+                if (cursor.y == 2) {
+                    cursor.y--;
+                    cursor.x = Math.min(cursor.x, name.length());
+                }
+                return true;
+            }
+            case 264: {
+                if (cursor.y == 1) {
+                    cursor.y++;
+                    cursor.x = Math.min(cursor.x, color.length());
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (super.charTyped(chr, modifiers)) {
+            return true;
+        }
+        if (SharedConstants.isValidChar(chr) && cursorVisible) {
+            if (cursor.y == 1) {
+                this.name = name.substring(0, cursor.x) + chr + name.substring(cursor.x);
+            } else if (cursor.y == 2) {
+                this.color = color.substring(0, cursor.x) + chr + color.substring(cursor.x);
+            }
+            cursor.x++;
+            this.cachedPageIndex = -1;
             return true;
         }
         return false;
@@ -80,22 +142,21 @@ extends Screen {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BOOK_TEXTURE);
         int i = (this.width - 192) / 2;
-        int j = 2;
         this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
         if (this.cachedPageIndex != this.pageIndex) {
             StringVisitable stringVisitable = new TextCreator("Coords")
+                //.format(Formatting.BOLD)
                 .addNewline(
                     new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z))
                         .format(Formatting.RED)
-                        .center()
                 ).addNewline(
-                    new TextCreator("Name")
+                    new TextCreator("Name")//.format(Formatting.BOLD)
                 ).addNewline(
-                    (name == "" ? new TextCreator("Enter name").format(Formatting.GRAY) : new TextCreator(name)).format(Formatting.UNDERLINE).center()
+                    (name == "" ? new TextCreator("Enter name").format(Formatting.GRAY) : new TextCreator(name)).format(Formatting.UNDERLINE)
                 ).addNewline(
-                    new TextCreator("Color")
+                    new TextCreator("Color")//.format(Formatting.BOLD)
                 ).addNewline(
-                    (name == "" ? new TextCreator("Enter color").format(Formatting.GRAY) : new TextCreator(name)).format(Formatting.UNDERLINE).center()
+                    (color == "" ? new TextCreator("Enter color").format(Formatting.GRAY) : new TextCreator(color).format(Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color))).format(Formatting.UNDERLINE)
                 )
                 .raw();
             this.cachedPage = this.textRenderer.wrapLines(stringVisitable, 114);
@@ -117,12 +178,31 @@ extends Screen {
     }
 
     private void drawCursor(MatrixStack matrices) {
-        Position pos = screenPositionToAbsolutePosition(new Position(cursor.x, line == 1 ? this.textRenderer.fontHeight * 3 : (line == 1 ? this.textRenderer.fontHeight * 5 : null), 10));
-        DrawableHelper.fill(matrices, pos.x, pos.y - 1, pos.x + 1, pos.y + this.textRenderer.fontHeight, -16777216);
+        if (cursor.y == 1 && cursorVisible) {
+            Position pos = screenPositionToAbsolutePosition(new Position(
+                this.textRenderer.getWidth(name.substring(0, cursor.x)),
+                this.textRenderer.fontHeight * 3,
+                10
+            ));
+
+            DrawableHelper.fill(matrices, pos.x, pos.y - 1, pos.x + 1, pos.y + this.textRenderer.fontHeight, -16777216);
+        } else if (cursor.y == 2 && cursorVisible) {
+            Position pos = screenPositionToAbsolutePosition(new Position(
+                this.textRenderer.getWidth(color.substring(0, cursor.x)),
+                this.textRenderer.fontHeight * 5,
+                10
+            ));
+
+            DrawableHelper.fill(matrices, pos.x, pos.y - 1, pos.x + 1, pos.y + this.textRenderer.fontHeight, -16777216);
+        }
     }
 
     private Position screenPositionToAbsolutePosition(Position position) {
         return new Position(position.x + (this.width - 192) / 2 + 36, position.y + 32, 5);
+    }
+
+    private Position absolutePositionToScreenPosition(double x, double y) {
+        return new Position(x - (this.width - 192) / 2 - 36, y - 32, 5);
     }
 
     @Override
@@ -130,6 +210,18 @@ extends Screen {
         Style style;
         if (button == 0 && (style = this.getTextStyleAt(mouseX, mouseY)) != null && this.handleTextClick(style)) {
             return true;
+        }
+        Position mouse = this.absolutePositionToScreenPosition(mouseX, mouseY);
+        if (mouse.y >= this.textRenderer.fontHeight * 3 && mouse.y <= this.textRenderer.fontHeight * 4) {
+            cursor.y = 1;
+            cursor.x = this.textRenderer.trimToWidth(name, mouse.x).length();
+            this.cursorVisible = true;
+        } else if (mouse.y >= this.textRenderer.fontHeight * 5 && mouse.y <= this.textRenderer.fontHeight * 6) {
+            cursor.y = 2;
+            cursor.x = this.textRenderer.trimToWidth(color, mouse.x).length();
+            this.cursorVisible = true;
+        } else {
+            this.cursorVisible = false;
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }

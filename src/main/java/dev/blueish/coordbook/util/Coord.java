@@ -3,7 +3,10 @@ package dev.blueish.coordbook.util;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.TranslatableText;
 import dev.blueish.coordbook.CoordinateBook;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class Coord {
   public Position coords;
@@ -40,8 +43,21 @@ public class Coord {
     file.put(coords, name, color, dimension, favorite, date);
   }
 
-  public MutableText getText() {
-    CoordinateBook.LOGGER.info(name);
-    return new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z)).raw();
+  public MutableText getText(int pageNum) {
+    return new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum).raw();
+  }
+
+  public MutableText getPage() {
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    return new TextCreator(name)
+                .format(color)
+                //.format(Formatting.BOLD)
+                .addNewline(
+                    new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
+                ).addNewline(
+                    //new TextCreator(dateFormat.format(date))
+                    new TextCreator("date no work")
+                )
+                .raw();
   }
 }

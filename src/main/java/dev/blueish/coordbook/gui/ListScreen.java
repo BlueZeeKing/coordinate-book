@@ -89,11 +89,14 @@ extends Screen {
     }
 
     private int getPageCount() {
-        return this.contents.pageCount;
+        return this.contents.listPageCount;
     }
 
     protected void goToPreviousPage() {
-        if (this.pageIndex > 0) {
+        if (this.pageIndex > this.getPageCount() - 1) {
+            this.pageIndex = 0;
+            this.cachedPageIndex = -1;
+        } else if (this.pageIndex > 0) {
             --this.pageIndex;
         }
         this.updatePageButtons();

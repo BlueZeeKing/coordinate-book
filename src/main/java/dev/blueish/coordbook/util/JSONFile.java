@@ -38,7 +38,7 @@ public class JSONFile {
       }
       reader.close();
 
-      if (created) {
+      if (created || contents == "") {
         this.contents = "[]";
       }
 
@@ -83,7 +83,6 @@ public class JSONFile {
 
     for (int i = 0; i < json.length(); i++) {
       JSONObject obj = json.getJSONObject(i);
-      CoordinateBook.LOGGER.info(obj.toString());
       res.add(new Coord(
         new Position(obj.getJSONObject("coords")),
         obj.getString("name"), 

@@ -4,8 +4,8 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import java.lang.Math;
 
 public class TextCreator {
   private MutableText text;
@@ -14,11 +14,15 @@ public class TextCreator {
     text = new LiteralText(message);
   }
 
+  public TextCreator(Text message) {
+    text = new LiteralText("").append(message);
+  }
+
   public TextCreator(String message, Object... args) {
     text = new LiteralText(String.format(message, args));
   }
 
-  public TextCreator add(String message) {
+  public TextCreator add(String message) { // TODO: Don't carry formatting over
     text.append(message);
     return this;
   }
@@ -60,8 +64,8 @@ public class TextCreator {
     return this;
   }
 
-  public TextCreator click(String message) {
-    text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message)));
+  public TextCreator click(int page) {
+    text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, Integer.toString(page))));
     return this;
   }
 

@@ -45,7 +45,6 @@ public class CoordinateBook implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (open.wasPressed()) {
 				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
-				new Coord(new Position(0, 100, 0), "hi", Formatting.AQUA, "overworld");
 				client.setScreen(new ListScreen(new Book(1)));
 			}
 

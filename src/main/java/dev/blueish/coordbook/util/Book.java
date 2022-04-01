@@ -20,7 +20,7 @@ public class Book {
 
   public MutableText getPage(int index) {
     if (index < listPageCount) {
-      TextCreator content = new TextCreator("Coordinate Book").center();//.format(Formatting.BOLD);
+      TextCreator content = new TextCreator("Coordinate Book").center().format(Formatting.BOLD);
       ArrayList<Coord> coords = file.getAll();
 
       for (int i = 0; i < Math.min(coords.size(), 15); i++) {

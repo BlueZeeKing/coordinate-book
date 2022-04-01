@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import dev.blueish.coordbook.CoordinateBook;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 
 public class Coord {
@@ -48,7 +48,6 @@ public class Coord {
   }
 
   public MutableText getPage() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
     return new TextCreator(name)
                 .format(color)
                 //.format(Formatting.BOLD)
@@ -56,7 +55,7 @@ public class Coord {
                     new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
                 ).addNewline(
                     //new TextCreator(dateFormat.format(date))
-                    new TextCreator("date no work")
+                    new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
                 )
                 .raw();
   }

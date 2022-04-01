@@ -6,20 +6,31 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.text.Style;
 
 public class TextCreator {
   private MutableText text;
+  private Style defaultStyle = Style.EMPTY;
+
+  private void setStyle() {
+    this.defaultStyle = defaultStyle.withBold(false);
+    this.defaultStyle = defaultStyle.withColor(Formatting.BLACK);
+    this.defaultStyle = defaultStyle.withUnderline(false);
+  }
 
   public TextCreator(String message) {
     text = new LiteralText(message);
+    this.setStyle();
   }
 
   public TextCreator(Text message) {
     text = new LiteralText("").append(message);
+    this.setStyle();
   }
 
   public TextCreator(String message, Object... args) {
     text = new LiteralText(String.format(message, args));
+    this.setStyle();
   }
 
   public TextCreator add(String message) { // TODO: Don't carry formatting over
@@ -39,14 +50,12 @@ public class TextCreator {
 
   public TextCreator addNewline(MutableText message) {
     text.append("\n");
-    text.append(message);
+    text.append(message.fillStyle(defaultStyle));
     return this;
   }
 
   public TextCreator addNewline(TextCreator message) {
-    text.append("\n");
-    text.append(message.raw());
-    return this;
+    return this.addNewline(message.raw());
   }
 
   public TextCreator format(Formatting... format) {

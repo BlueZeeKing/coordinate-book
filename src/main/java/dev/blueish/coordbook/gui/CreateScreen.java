@@ -145,16 +145,15 @@ extends Screen {
         this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
         if (this.cachedPageIndex != this.pageIndex) {
             StringVisitable stringVisitable = new TextCreator("Coords")
-                //.format(Formatting.BOLD)
+                .format(Formatting.BOLD)
                 .addNewline(
                     new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z))
-                        .format(Formatting.RED)
                 ).addNewline(
-                    new TextCreator("Name")//.format(Formatting.BOLD)
+                    new TextCreator("Name").format(Formatting.BOLD)
                 ).addNewline(
                     (name == "" ? new TextCreator("Enter name").format(Formatting.GRAY) : new TextCreator(name)).format(Formatting.UNDERLINE)
-                ).addNewline(
-                    new TextCreator("Color")//.format(Formatting.BOLD)
+                ).add("\n").addNewline(
+                    new TextCreator("Color").format(Formatting.BOLD)
                 ).addNewline(
                     (color == "" ? new TextCreator("Enter color").format(Formatting.GRAY) : new TextCreator(color).format(Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color))).format(Formatting.UNDERLINE)
                 )
@@ -189,7 +188,7 @@ extends Screen {
         } else if (cursor.y == 2 && cursorVisible) {
             Position pos = screenPositionToAbsolutePosition(new Position(
                 this.textRenderer.getWidth(color.substring(0, cursor.x)),
-                this.textRenderer.fontHeight * 5,
+                this.textRenderer.fontHeight * 6,
                 10
             ));
 
@@ -216,7 +215,7 @@ extends Screen {
             cursor.y = 1;
             cursor.x = this.textRenderer.trimToWidth(name, mouse.x).length();
             this.cursorVisible = true;
-        } else if (mouse.y >= this.textRenderer.fontHeight * 5 && mouse.y <= this.textRenderer.fontHeight * 6) {
+        } else if (mouse.y >= this.textRenderer.fontHeight * 6 && mouse.y <= this.textRenderer.fontHeight * 7) {
             cursor.y = 2;
             cursor.x = this.textRenderer.trimToWidth(color, mouse.x).length();
             this.cursorVisible = true;

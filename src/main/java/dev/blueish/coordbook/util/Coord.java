@@ -50,11 +50,10 @@ public class Coord {
   public MutableText getPage() {
     return new TextCreator(name)
                 .format(color)
-                //.format(Formatting.BOLD)
+                .format(Formatting.BOLD)
                 .addNewline(
                     new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
                 ).addNewline(
-                    //new TextCreator(dateFormat.format(date))
                     new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
                 )
                 .raw();

@@ -93,7 +93,7 @@ extends Screen {
     }
 
     protected void goToPreviousPage() {
-        if (this.pageIndex > this.getPageCount() - 1) {
+        if (this.pageIndex > this.getPageCount()) {
             this.pageIndex = 0;
             this.cachedPageIndex = -1;
         } else if (this.pageIndex > 0) {
@@ -142,7 +142,7 @@ extends Screen {
         int j = 2;
         this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
         if (this.cachedPageIndex != this.pageIndex) {
-            StringVisitable stringVisitable = this.contents.getPage(this.pageIndex);
+            StringVisitable stringVisitable = this.contents.getPage(this.pageIndex, this.textRenderer);
             this.cachedPage = this.textRenderer.wrapLines(stringVisitable, 114);
             this.pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(this.getPageCount(), 1));
         }

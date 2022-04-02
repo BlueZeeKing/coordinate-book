@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.util;
 
+import dev.blueish.coordbook.CoordinateBook;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
@@ -48,7 +49,13 @@ public class TextCreator {
     return this;
   }
 
+  public TextCreator add(MutableText message) {
+    text.append(message);
+    return this;
+  }
+
   public TextCreator addNewline(MutableText message) {
+    //CoordinateBook.LOGGER.info(message.toString() + " - " + message.fillStyle(defaultStyle).toString());
     text.append("\n");
     text.append(message.fillStyle(defaultStyle));
     return this;
@@ -79,12 +86,12 @@ public class TextCreator {
   }
 
   public TextCreator filler(String symbol) {
-    text.append(new LiteralText(" " + Formatting.RESET + Formatting.DARK_GRAY + symbol + Formatting.RESET + " "));
+    text.append(new LiteralText(" " + Formatting.RESET + Formatting.GRAY + symbol + Formatting.RESET + " "));
     return this;
   }
 
-  public TextCreator center() {
-    this.text = new LiteralText("    ").append(text);
+  public TextCreator begin(String string) {
+    this.text = new LiteralText(string).append(text);
     return this;
   }
 

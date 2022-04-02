@@ -1,9 +1,10 @@
 package dev.blueish.coordbook.util;
 
 import java.util.ArrayList;
+
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
-import dev.blueish.coordbook.CoordinateBook;
 
 public class Book {
   public ArrayList<Coord> coordList;
@@ -18,13 +19,16 @@ public class Book {
     this.pageCount = listPageCount+coordList.size();
   }
 
-  public MutableText getPage(int index) {
+  public MutableText getPage(int index, TextRenderer renderer) {
     if (index < listPageCount) {
-      TextCreator content = new TextCreator("Coordinate Book").center().format(Formatting.BOLD);
+      TextCreator content = index == 0 ? new TextCreator("Coordinate Book").begin("  ").format(Formatting.BOLD) : new TextCreator("");
       ArrayList<Coord> coords = file.getAll();
-
-      for (int i = 0; i < Math.min(coords.size(), 15); i++) {
-        content.addNewline(coords.get(i).getText(listPageCount+i+1));
+      for (int i = 0; i < Math.min(coords.size() - index * 13, index == 0 ? 12 : 13); i++) {
+        if (i == 0 && index != 0) {
+          content.add(coords.get(i - (index == 0 ? 0 : 1) + index * 13).getText(listPageCount + (index == 0 ? 1 : 0) + i + index * 13));
+        } else {
+          content.addNewline(coords.get(i - (index == 0 ? 0 : 1) + index * 13).getText(listPageCount + (index == 0 ? 1 : 0) + i + index * 13));
+        }
       }
 
       return content.raw();

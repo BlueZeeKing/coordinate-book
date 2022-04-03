@@ -1,9 +1,8 @@
-# Fabric Example Mod
-
-## Setup
-
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+# Coordinate Book
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/BlueZeeKing/coordinate-book/build)
+![Fabric API](https://img.shields.io/badge/Fabric_API-required-informational)
+![GitHub](https://img.shields.io/github/license/BlueZeeKing/coordinate-book)
+## Default Keybinds
+ - `o` - Open the list of saved coordinates
+ - `k` - Save the current coordinates
+ - `r` - Open the most recent page

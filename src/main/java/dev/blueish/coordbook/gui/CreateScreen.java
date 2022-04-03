@@ -65,7 +65,7 @@ extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color), this.client.player.getWorld().getRegistryKey().getValue().toString()); } }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color), this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
     }
 
     @Override

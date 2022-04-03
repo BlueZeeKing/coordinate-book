@@ -3,6 +3,9 @@ package dev.blueish.coordbook.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Collections;
 import java.util.List;
+
+import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,6 +22,7 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
@@ -43,16 +47,15 @@ extends Screen {
     private Text pageIndexText = LiteralText.EMPTY;
     private PageTurnWidget nextPageButton;
     private PageTurnWidget previousPageButton;
+    private ButtonWidget deleteButton;
     private final boolean pageTurnSound;
+    private int lastItemScreen = 0;
 
-    public ListScreen(Book pageProvider) {
-        this(pageProvider, true);
-    }
-
-    private ListScreen(Book contents, boolean playPageTurnSound) {
+    public ListScreen(Book pageProvider, int startPage) {
         super(NarratorManager.EMPTY);
-        this.contents = contents;
-        this.pageTurnSound = playPageTurnSound;
+        this.contents = pageProvider;
+        this.pageTurnSound = true;
+        this.pageIndex = startPage;
     }
 
     public boolean setPage(int index) {
@@ -61,6 +64,7 @@ extends Screen {
             this.pageIndex = i;
             this.updatePageButtons();
             this.cachedPageIndex = -1;
+            CoordinateBook.lastPage = i;
             return true;
         }
         return false;
@@ -80,11 +84,18 @@ extends Screen {
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, button -> this.client.setScreen(null)));
     }
 
+    private void delete() {
+        this.contents.delete(this.pageIndex);
+        this.pageIndex = 0; this.cachedPageIndex = -1;
+        this.updatePageButtons();
+    }
+
     protected void addPageButtons() {
         int i = (this.width - 192) / 2;
         int j = 2;
         this.nextPageButton = this.addDrawableChild(new PageTurnWidget(i + 116, 159, true, button -> this.goToNextPage(), this.pageTurnSound));
         this.previousPageButton = this.addDrawableChild(new PageTurnWidget(i + 43, 159, false, button -> this.goToPreviousPage(), this.pageTurnSound));
+        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> { this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents)); }));
         this.updatePageButtons();
     }
 
@@ -93,8 +104,8 @@ extends Screen {
     }
 
     protected void goToPreviousPage() {
-        if (this.pageIndex > this.getPageCount()) {
-            this.pageIndex = 0;
+        if (this.pageIndex >= this.getPageCount()) {
+            this.pageIndex = lastItemScreen;
             this.cachedPageIndex = -1;
         } else if (this.pageIndex > 0) {
             --this.pageIndex;
@@ -112,6 +123,7 @@ extends Screen {
     private void updatePageButtons() {
         this.nextPageButton.visible = this.pageIndex < this.getPageCount() - 1;
         this.previousPageButton.visible = this.pageIndex > 0;
+        this.deleteButton.visible = this.pageIndex >= this.getPageCount();
     }
 
     @Override
@@ -144,7 +156,7 @@ extends Screen {
         if (this.cachedPageIndex != this.pageIndex) {
             StringVisitable stringVisitable = this.contents.getPage(this.pageIndex, this.textRenderer);
             this.cachedPage = this.textRenderer.wrapLines(stringVisitable, 114);
-            this.pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(this.getPageCount(), 1));
+            this.pageIndexText = this.pageIndex < this.getPageCount() ? new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(this.getPageCount(), 1)) : new LiteralText("");
         }
         this.cachedPageIndex = this.pageIndex;
         int k = this.textRenderer.getWidth(this.pageIndexText);
@@ -157,6 +169,9 @@ extends Screen {
         Style style = this.getTextStyleAt(mouseX, mouseY);
         if (style != null) {
             this.renderTextHoverEffect(matrices, style, mouseX, mouseY);
+        }
+        if (this.pageIndex < this.getPageCount()) {
+            this.lastItemScreen = this.pageIndex;
         }
         super.render(matrices, mouseX, mouseY, delta);
     }

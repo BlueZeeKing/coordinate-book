@@ -3,6 +3,8 @@ package dev.blueish.coordbook.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.FileWriter;
@@ -21,14 +23,16 @@ public class JSONFile {
   private File file;
   private String contents = "";
   private JSONArray json;
+  private String name;
 
   public JSONFile(String name) {
     try {
       new File("./coordbook").mkdir();
 
-      this.path = "./coordbook/" + name + ".json";
+      this.path = "./coordbook/" + name;
+      this.name = name;
 
-      this.file = new File(path);
+      this.file = new File(path + ".json");
       boolean created = file.createNewFile();
 
       Scanner reader = new Scanner(file);
@@ -54,7 +58,7 @@ public class JSONFile {
 
   public void write() {
     try {
-      FileWriter writer = new FileWriter(path);
+      FileWriter writer = new FileWriter(path + ".json");
       writer.write(json.toString());
       writer.close();
     } catch (IOException e) {
@@ -89,10 +93,16 @@ public class JSONFile {
         Formatting.byName(obj.getString("color")),
         obj.getString("dimension"), obj.getBoolean("favorite"),
         LocalDateTime.ofEpochSecond(
-        obj.getInt("date"), 0, ZoneOffset.UTC)
+        obj.getInt("date"), 0, ZoneOffset.UTC),
+        this.name
       ));
     }
 
     return res;
+  }
+
+  public void delete(int index) {
+    this.json.remove(index);
+    this.write();
   }
 }

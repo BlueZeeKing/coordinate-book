@@ -15,7 +15,7 @@ public class TextCreator {
 
   private void setStyle() {
     this.defaultStyle = defaultStyle.withBold(false);
-    this.defaultStyle = defaultStyle.withColor(Formatting.BLACK);
+    this.defaultStyle = defaultStyle.withColor(Formatting.BLUE);
     this.defaultStyle = defaultStyle.withUnderline(false);
   }
 
@@ -55,9 +55,9 @@ public class TextCreator {
   }
 
   public TextCreator addNewline(MutableText message) {
-    //CoordinateBook.LOGGER.info(message.toString() + " - " + message.fillStyle(defaultStyle).toString());
+    this.text = new LiteralText("").append(text);
     text.append("\n");
-    text.append(message.fillStyle(defaultStyle));
+    text.append(message);
     return this;
   }
 
@@ -67,11 +67,6 @@ public class TextCreator {
 
   public TextCreator format(Formatting... format) {
     text.formatted(format);
-    return this;
-  }
-
-  public TextCreator fail() {
-    text.formatted(Formatting.RED);
     return this;
   }
 

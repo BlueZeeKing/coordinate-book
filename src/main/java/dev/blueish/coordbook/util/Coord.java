@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.util;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
@@ -17,26 +18,26 @@ public class Coord {
   public LocalDateTime date;
   private JSONFile file;
 
-  public Coord(Position coords, String name, Formatting color, String dimension) {
+  public Coord(Position coords, String name, Formatting color, String dimension, String fileName) {
     this.coords = coords;
     this.name = name;
     this.color = color;
     this.dimension = dimension;
     this.favorite = false;
     this.date = LocalDateTime.now();
-    this.file = new JSONFile("test");
+    this.file = new JSONFile(fileName);
 
     this.write();
   }
 
-  public Coord(Position coords, String name, Formatting color, String dimension, boolean favorite, LocalDateTime date) {
+  public Coord(Position coords, String name, Formatting color, String dimension, boolean favorite, LocalDateTime date, String fileName) {
     this.coords = coords;
     this.name = name;
     this.color = color;
     this.dimension = dimension;
     this.favorite = favorite;
     this.date = date;
-    this.file = new JSONFile("test");
+    this.file = new JSONFile(fileName);
   }
 
   public void write() {

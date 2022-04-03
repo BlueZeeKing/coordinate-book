@@ -1,5 +1,6 @@
 package dev.blueish.coordbook;
 
+import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.api.ClientModInitializer;
@@ -28,6 +29,15 @@ public class CoordinateBook implements ClientModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("Coordbook");
+	public static int lastPage = 0;
+
+	public static String ClientToName(MinecraftClient client) {
+		if (client.isInSingleplayer()) {
+			return "singleplayer";
+		} else {
+			return client.getServer().getServerIp();
+		}
+	}
 
 	@Override
 	public void onInitializeClient() {
@@ -38,6 +48,10 @@ public class CoordinateBook implements ClientModInitializer {
 		KeyBinding create = KeyBindingHelper
 				.registerKeyBinding(new KeyBinding("key.coordbook.create",
 						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K, "category.coordbook.coordbook"));
+
+		KeyBinding open_last = KeyBindingHelper
+				.registerKeyBinding(new KeyBinding("key.coordbook.open_last",
+						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.coordbook.coordbook"));
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
@@ -45,11 +59,15 @@ public class CoordinateBook implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (open.wasPressed()) {
 				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
-				client.setScreen(new ListScreen(new Book(1)));
+				client.setScreen(new ListScreen(new Book(client), 0));
 			}
 
 			while (create.wasPressed()) {
 				client.setScreen(new CreateScreen(new Position(client.player.getX(), client.player.getY(), client.player.getZ())));
+			}
+
+			while (open_last.wasPressed()) {
+				client.setScreen(new ListScreen(new Book(client), lastPage));
 			}
 		});
 

@@ -28,7 +28,8 @@ public class CoordinateBook implements ClientModInitializer {
 		if (client.isInSingleplayer()) {
 			return "singleplayer";
 		} else {
-			return client.getServer().getServerIp();
+			//LOGGER.info(client.getServer().getServerIp());
+			return "multiplayer";
 		}
 	}
 

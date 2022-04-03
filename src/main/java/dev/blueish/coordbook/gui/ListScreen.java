@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,8 +27,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
-
-import dev.blueish.coordbook.util.Book;
 
 @Environment(value=EnvType.CLIENT)
 public class ListScreen
@@ -84,15 +83,8 @@ extends Screen {
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, button -> this.client.setScreen(null)));
     }
 
-    private void delete() {
-        this.contents.delete(this.pageIndex);
-        this.pageIndex = 0; this.cachedPageIndex = -1;
-        this.updatePageButtons();
-    }
-
     protected void addPageButtons() {
         int i = (this.width - 192) / 2;
-        int j = 2;
         this.nextPageButton = this.addDrawableChild(new PageTurnWidget(i + 116, 159, true, button -> this.goToNextPage(), this.pageTurnSound));
         this.previousPageButton = this.addDrawableChild(new PageTurnWidget(i + 43, 159, false, button -> this.goToPreviousPage(), this.pageTurnSound));
         this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> { this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents)); }));
@@ -151,7 +143,6 @@ extends Screen {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BOOK_TEXTURE);
         int i = (this.width - 192) / 2;
-        int j = 2;
         this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
         if (this.cachedPageIndex != this.pageIndex) {
             StringVisitable stringVisitable = this.contents.getPage(this.pageIndex, this.textRenderer);

@@ -1,4 +1,4 @@
-package dev.blueish.coordbook.util;
+package dev.blueish.coordbook.data;
 
 import org.json.JSONObject;
 

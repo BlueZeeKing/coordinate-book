@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.NarratorManager;
-import net.minecraft.client.util.SelectionManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
@@ -27,8 +26,8 @@ import net.minecraft.SharedConstants;
 
 import dev.blueish.coordbook.util.TextCreator;
 import dev.blueish.coordbook.CoordinateBook;
-import dev.blueish.coordbook.util.Position;
-import dev.blueish.coordbook.util.Coord;
+import dev.blueish.coordbook.data.Coord;
+import dev.blueish.coordbook.data.Position;
 
 @Environment(value=EnvType.CLIENT)
 public class CreateScreen

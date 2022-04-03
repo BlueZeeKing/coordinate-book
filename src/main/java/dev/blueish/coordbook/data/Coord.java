@@ -1,13 +1,13 @@
-package dev.blueish.coordbook.util;
+package dev.blueish.coordbook.data;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
-import dev.blueish.coordbook.CoordinateBook;
 import java.time.format.DateTimeFormatter;
-import java.text.SimpleDateFormat;
+
+import dev.blueish.coordbook.util.JSONFile;
+import dev.blueish.coordbook.util.TextCreator;
 
 public class Coord {
   public Position coords;

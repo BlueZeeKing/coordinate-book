@@ -1,6 +1,5 @@
 package dev.blueish.coordbook.util;
 
-import dev.blueish.coordbook.CoordinateBook;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
@@ -34,7 +33,7 @@ public class TextCreator {
     this.setStyle();
   }
 
-  public TextCreator add(String message) { // TODO: Don't carry formatting over
+  public TextCreator add(String message) {
     text.append(message);
     return this;
   }

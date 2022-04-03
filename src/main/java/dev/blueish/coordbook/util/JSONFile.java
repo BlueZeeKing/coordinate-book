@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.FileWriter;
@@ -14,9 +13,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import java.util.ArrayList;
-import dev.blueish.coordbook.util.Coord;
 
 import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.data.Coord;
+import dev.blueish.coordbook.data.Position;
 
 public class JSONFile {
   private String path;

@@ -1,14 +1,11 @@
 package dev.blueish.coordbook.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.blueish.coordbook.CoordinateBook;
-import dev.blueish.coordbook.util.Coord;
-import dev.blueish.coordbook.util.Position;
+
+import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.SharedConstants;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -23,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import dev.blueish.coordbook.util.Book;
 
 @Environment(value=EnvType.CLIENT)
 public class ConfirmScreen
@@ -40,8 +36,6 @@ extends Screen {
     private List<OrderedText> cachedPage = Collections.emptyList();
     private int cachedPageIndex = -1;
     private Text pageIndexText = LiteralText.EMPTY;
-    private ButtonWidget confirmButton;
-    private ButtonWidget cancelButton;
     private int index;
     private Book book;
 

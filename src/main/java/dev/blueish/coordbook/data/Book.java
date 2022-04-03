@@ -1,8 +1,10 @@
-package dev.blueish.coordbook.util;
+package dev.blueish.coordbook.data;
 
 import java.util.ArrayList;
 
 import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.util.JSONFile;
+import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.MutableText;

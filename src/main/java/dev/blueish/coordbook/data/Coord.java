@@ -45,7 +45,7 @@ public class Coord {
   }
 
   public MutableText getText(int pageNum) {
-    return new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum).raw();
+    return new TextCreator(new TranslatableText(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum).raw();
   }
 
   public MutableText getPage() {

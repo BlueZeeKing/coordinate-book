@@ -53,6 +53,11 @@ public class TextCreator {
     return this;
   }
 
+  public TextCreator addNoFormat(TextCreator message) {
+    this.text = new LiteralText("").append(text).append(message.raw());
+    return this;
+  }
+
   public TextCreator addNewline(MutableText message) {
     this.text = new LiteralText("").append(text);
     text.append("\n");
@@ -76,6 +81,11 @@ public class TextCreator {
 
   public TextCreator click(int page) {
     text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, Integer.toString(page))));
+    return this;
+  }
+
+  public TextCreator send(String command) {
+    text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)));
     return this;
   }
 

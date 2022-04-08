@@ -56,6 +56,10 @@ public class Coord {
                     new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
                 ).addNewline(
                     new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
+                ).addNewline(
+                  new TextCreator("\n").add(new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").send(
+                    String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
+                  ))
                 )
                 .raw();
   }

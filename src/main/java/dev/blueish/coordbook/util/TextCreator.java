@@ -58,6 +58,11 @@ public class TextCreator {
     return this;
   }
 
+  public TextCreator addNoFormat(String message) {
+    this.text = new LiteralText("").append(text).append(new LiteralText(message));
+    return this;
+  }
+
   public TextCreator addNewline(MutableText message) {
     this.text = new LiteralText("").append(text);
     text.append("\n");

@@ -58,6 +58,13 @@ extends Screen {
         this.cursor = new Position(0, 2, 0);
     }
 
+    public CreateScreen(Position coords, String name) {
+        super(NarratorManager.EMPTY);
+        this.coords = coords;
+        this.cursor = new Position(0, 2, 0);
+        this.name = name;
+    }
+
     @Override
     protected void init() {
         this.addCloseButton();

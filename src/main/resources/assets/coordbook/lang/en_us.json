@@ -2,6 +2,7 @@
   "key.coordbook.open": "Open the Coordinate Book",
   "key.coordbook.create": "Save Coordinates",
   "key.coordbook.open_last": "Open last page",
+  "key.coordbook.send_coords": "Send Current Coordinates",
   "category.coordbook.coordbook": "Coordinate Book",
   "minecraft:overworld": "O",
   "minecraft:the_nether": "N",

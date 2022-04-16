@@ -1,6 +1,18 @@
 package dev.blueish.coordbook;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.blueish.coordbook.util.TextCreator;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.command.argument.CoordinateArgument;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.util.Formatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.api.ClientModInitializer;
@@ -23,6 +35,7 @@ public class CoordinateBook implements ClientModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("Coordbook");
 	public static int lastPage = 0;
+	public static MinecraftClient client;
 
 	public static String ClientToName(MinecraftClient client) {
 		if (client.isInSingleplayer()) {
@@ -46,9 +59,41 @@ public class CoordinateBook implements ClientModInitializer {
 		KeyBinding open_last = KeyBindingHelper
 				.registerKeyBinding(new KeyBinding("key.coordbook.open_last",
 						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_R, "category.coordbook.coordbook"));
+
+		KeyBinding send_coords = KeyBindingHelper
+				.registerKeyBinding(new KeyBinding("key.coordbook.send_coords",
+						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_MINUS, "category.coordbook.coordbook"));
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+			CoordinateBook.client = client;
+		});
+
+		ClientCommandManager.DISPATCHER.register(ClientCommandManager.literal("coordbook").then(
+			ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
+				ClientCommandManager.argument("y", IntegerArgumentType.integer()).then(
+					ClientCommandManager.argument("z", IntegerArgumentType.integer()).then(
+						ClientCommandManager.argument("name", StringArgumentType.greedyString())
+							.executes(context -> {
+								int x = IntegerArgumentType.getInteger(context, "x");
+								int y = IntegerArgumentType.getInteger(context, "y");
+								int z = IntegerArgumentType.getInteger(context, "z");
+								String name = StringArgumentType.getString(context, "name");
+
+								if (name.equals("coordinatebook-empty-this-is-too-long")) {
+									client.setScreen(new CreateScreen(new Position(x, y, z)));
+								} else {
+									client.setScreen(new CreateScreen(new Position(x, y, z), name));
+								}
+
+								return 0;
+							})
+					)
+				)
+			)
+		));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (open.wasPressed()) {
@@ -62,6 +107,10 @@ public class CoordinateBook implements ClientModInitializer {
 
 			while (open_last.wasPressed()) {
 				client.setScreen(new ListScreen(new Book(client), lastPage));
+			}
+
+			while (send_coords.wasPressed()) {
+				client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int)client.player.getX(), (int)client.player.getY(), (int)client.player.getZ()));
 			}
 		});
 

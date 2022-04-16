@@ -20,10 +20,12 @@ import java.util.regex.Pattern;
 public class ChatMixin {
   @Inject(method = "onGameMessage", at = @At("HEAD"), cancellable = true)
   public void onGameMessage(GameMessageS2CPacket packet, CallbackInfo ci) {
-    Matcher sender = Pattern.compile("(<.*?> )").matcher(packet.getMessage().getString());
+    Matcher sender = Pattern.compile("(.*)Coordinate Book: ").matcher(packet.getMessage().getString());
     String text = sender.replaceFirst("");
 
-    if (text.startsWith("Coordinate Book: ")) {
+    sender.reset();
+
+    if (sender.find()) {
       text = text.replaceFirst("Coordinate Book: ", "");
 
       Matcher wName = Pattern.compile("(.*) - ([0-9,\\-]*)/([0-9,\\-]*)/([0-9,\\-]*)").matcher(text);

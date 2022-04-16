@@ -11,12 +11,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
@@ -71,7 +66,7 @@ extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color), this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
     }
 
     @Override
@@ -129,9 +124,11 @@ extends Screen {
             return true;
         }
         if (SharedConstants.isValidChar(chr) && cursorVisible) {
-            if (cursor.y == 1) {
+            if (cursor.y == 1 && !isNotToLong(name.substring(0, cursor.x) + chr + name.substring(cursor.x))) {
                 this.name = name.substring(0, cursor.x) + chr + name.substring(cursor.x);
-            } else if (cursor.y == 2) {
+            } else if (cursor.y == 1) {
+                return false;
+            } else {
                 this.color = color.substring(0, cursor.x) + chr + color.substring(cursor.x);
             }
             cursor.x++;
@@ -139,6 +136,10 @@ extends Screen {
             return true;
         }
         return false;
+    }
+
+    private boolean isNotToLong(String text) {
+        return this.textRenderer.getWidth("U " + text) > 114;
     }
 
     @Override
@@ -161,7 +162,7 @@ extends Screen {
                 ).add("\n").addNewline(
                     new TextCreator("Color").format(Formatting.BOLD)
                 ).addNewline(
-                    (color == "" ? new TextCreator("Enter color").format(Formatting.GRAY) : new TextCreator(color).format(Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color))).format(Formatting.UNDERLINE)
+                    (color == "" ? new TextCreator("Enter color").format(Formatting.GRAY) : new TextCreator(color).format(Formatting.byName(color) == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK)).format(Formatting.UNDERLINE)
                 )
                 .raw();
             this.cachedPage = this.textRenderer.wrapLines(stringVisitable, 114);

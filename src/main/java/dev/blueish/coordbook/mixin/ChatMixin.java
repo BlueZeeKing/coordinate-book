@@ -26,8 +26,6 @@ public class ChatMixin {
     sender.reset();
 
     if (sender.find()) {
-      text = text.replaceFirst("Coordinate Book: ", "");
-
       Matcher wName = Pattern.compile("(.*) - ([0-9,\\-]*)/([0-9,\\-]*)/([0-9,\\-]*)").matcher(text);
       Matcher woName = Pattern.compile("([0-9,\\-]*)/([0-9,\\-]*)/([0-9,\\-]*)").matcher(text);
 

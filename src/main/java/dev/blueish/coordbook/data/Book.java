@@ -27,7 +27,7 @@ public class Book {
 
   public MutableText getPage(int index, TextRenderer renderer) {
     if (index < listPageCount) {
-      TextCreator content = index == 0 ? new TextCreator("Coordinate Book").begin("  ").format(Formatting.BOLD) : new TextCreator("");
+      TextCreator content = index == 0 ? new TextCreator("Coordinate Book").format(Formatting.BOLD).center(renderer) : new TextCreator("");
       for (int i = 0; i < Math.min(coordList.size() - index * 13 + (listPageCount > 1 ? 1 : 0), index == 0 ? 12 : 13); i++) {
         if (i == 0 && index != 0) {
           content.add(coordList.get(i - 1 + index * 13).getText(listPageCount + i + index * 13));
@@ -38,7 +38,7 @@ public class Book {
 
       return content.raw();
     } else if (index < pageCount) {
-      return coordList.get(index - listPageCount).getPage();
+      return coordList.get(index - listPageCount).getPage(renderer);
     }
     return null;
   }

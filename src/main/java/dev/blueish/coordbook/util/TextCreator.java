@@ -1,12 +1,9 @@
 package dev.blueish.coordbook.util;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import dev.blueish.coordbook.CoordinateBook;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
-import net.minecraft.text.Style;
 
 public class TextCreator {
   private MutableText text;
@@ -99,8 +96,11 @@ public class TextCreator {
     return this;
   }
 
-  public TextCreator begin(String string) {
-    this.text = new LiteralText(string).append(text);
+  public TextCreator center(TextRenderer renderer) {
+    MutableText reversedText = new LiteralText(new StringBuilder("                    " + text.asString()).reverse().toString());
+    reversedText.setStyle(text.getStyle());
+    StringVisitable finished = renderer.trimToWidth(reversedText, (114 + renderer.getWidth(text))/2);
+    text = new LiteralText(new StringBuilder(finished.getString()).reverse().toString()).setStyle(text.getStyle());
     return this;
   }
 

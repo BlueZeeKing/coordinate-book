@@ -66,11 +66,13 @@ extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 105, 196, 100, 20, ScreenTexts.CANCEL, (button) -> { this.client.setScreen(null); }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 196, 100, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        CoordinateBook.LOGGER.info(String.valueOf(keyCode));
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         }
@@ -111,6 +113,22 @@ extends Screen {
                 if (cursor.y == 1) {
                     cursor.y++;
                     cursor.x = Math.min(cursor.x, color.length());
+                }
+                return true;
+            }
+            case 257: {
+                if (!cursorVisible) {
+                    cursorVisible = true;
+                    cursor.y = 1;
+                    cursor.x = 0;
+                } else if (cursor.y == 1) {
+                    cursor.y = 2;
+                    cursor.x = Math.min(cursor.x, color.length());
+                } else if (cursor.y == 2) {
+                    if (name != "") {
+                        new Coord(coords, name, Formatting.byName(color) == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client));
+                    }
+                    this.client.setScreen(null);
                 }
                 return true;
             }

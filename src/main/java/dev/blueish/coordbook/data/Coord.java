@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.data;
 
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
@@ -48,16 +49,17 @@ public class Coord {
     return new TextCreator(new TranslatableText(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum).raw();
   }
 
-  public MutableText getPage() {
+  public MutableText getPage(TextRenderer renderer) {
     return new TextCreator(name)
                 .format(color)
                 .format(Formatting.BOLD)
+                .center(renderer)
                 .addNewline(
                     new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
                 ).addNewline(
                     new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
                 ).addNewline(
-                  new TextCreator("\n").add(new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").send(
+                  new TextCreator("\n\n\n\n\n\n").add(new TextCreator("Send").format(Formatting.BLUE).center(renderer).hover("Send to all players").send(
                     String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
                   ))
                 )

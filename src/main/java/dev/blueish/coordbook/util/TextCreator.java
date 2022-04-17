@@ -97,10 +97,8 @@ public class TextCreator {
   }
 
   public TextCreator center(TextRenderer renderer) {
-    MutableText reversedText = new LiteralText(new StringBuilder("                    " + text.asString()).reverse().toString());
-    reversedText.setStyle(text.getStyle());
-    StringVisitable finished = renderer.trimToWidth(reversedText, (114 + renderer.getWidth(text))/2);
-    text = new LiteralText(new StringBuilder(finished.getString()).reverse().toString()).setStyle(text.getStyle());
+    String finished = renderer.trimToWidth("                    ", 114/2-renderer.getWidth(text)/2);
+    text = new LiteralText(finished).append(text);
     return this;
   }
 

@@ -82,6 +82,19 @@ public class JSONFile {
     this.write();
   }
 
+  public void put(Coord coord) {
+    JSONObject obj = new JSONObject();
+
+    obj.put("coords", coord.coords.getJSON());
+    obj.put("name", coord.name);
+    obj.put("color", coord.color.getName());
+    obj.put("dimension", coord.dimension);
+    obj.put("favorite", coord.favorite);
+    obj.put("date", coord.date.toEpochSecond(ZoneOffset.UTC));
+
+    json.put(obj);
+  }
+
   public ArrayList<Coord> getAll() {
     ArrayList<Coord> res = new ArrayList<Coord>();
 
@@ -103,6 +116,15 @@ public class JSONFile {
 
   public void delete(int index) {
     this.json.remove(index);
+    this.write();
+  }
+
+  public void rewrite(ArrayList<Coord> coords) {
+    this.json = new JSONArray();
+    for (Coord coord : coords) {
+      this.put(coord);
+    }
+
     this.write();
   }
 }

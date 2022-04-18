@@ -6,6 +6,8 @@ import java.util.List;
 
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Book;
+import dev.blueish.coordbook.data.Coord;
+import dev.blueish.coordbook.data.Position;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -48,11 +50,11 @@ extends Screen {
     private PageTurnWidget previousPageButton;
     private ButtonWidget deleteButton;
     private final boolean pageTurnSound;
-    private int lastItemScreen = 0;
+    private int lastListScreen = 0;
 
     public ListScreen(Book pageProvider, int startPage) {
         super(NarratorManager.EMPTY);
-        this.contents = pageProvider;
+        this.contents = pageProvider.init();
         this.pageTurnSound = true;
         this.pageIndex = startPage;
     }
@@ -63,7 +65,9 @@ extends Screen {
             this.pageIndex = i;
             this.updatePageButtons();
             this.cachedPageIndex = -1;
-            CoordinateBook.lastPage = i;
+            if (this.pageIndex >= this.getPageCount()) {
+                CoordinateBook.lastPage = i;
+            }
             return true;
         }
         return false;
@@ -87,7 +91,7 @@ extends Screen {
         int i = (this.width - 192) / 2;
         this.nextPageButton = this.addDrawableChild(new PageTurnWidget(i + 116, 159, true, button -> this.goToNextPage(), this.pageTurnSound));
         this.previousPageButton = this.addDrawableChild(new PageTurnWidget(i + 43, 159, false, button -> this.goToPreviousPage(), this.pageTurnSound));
-        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> { this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents)); }));
+        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> { this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListScreen)); }));
         this.updatePageButtons();
     }
 
@@ -97,7 +101,7 @@ extends Screen {
 
     protected void goToPreviousPage() {
         if (this.pageIndex >= this.getPageCount()) {
-            this.pageIndex = lastItemScreen;
+            this.pageIndex = lastListScreen;
             this.cachedPageIndex = -1;
         } else if (this.pageIndex > 0) {
             --this.pageIndex;
@@ -145,7 +149,7 @@ extends Screen {
         int i = (this.width - 192) / 2;
         this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
         if (this.cachedPageIndex != this.pageIndex) {
-            StringVisitable stringVisitable = this.contents.getPage(this.pageIndex, this.textRenderer);
+            StringVisitable stringVisitable = this.contents.getPage(this.pageIndex);
             this.cachedPage = this.textRenderer.wrapLines(stringVisitable, 114);
             this.pageIndexText = this.pageIndex < this.getPageCount() ? new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(this.getPageCount(), 1)) : new LiteralText("");
         }
@@ -162,7 +166,7 @@ extends Screen {
             this.renderTextHoverEffect(matrices, style, mouseX, mouseY);
         }
         if (this.pageIndex < this.getPageCount()) {
-            this.lastItemScreen = this.pageIndex;
+            this.lastListScreen = this.pageIndex;
         }
         super.render(matrices, mouseX, mouseY, delta);
     }
@@ -173,7 +177,17 @@ extends Screen {
         if (button == 0 && (style = this.getTextStyleAt(mouseX, mouseY)) != null && this.handleTextClick(style)) {
             return true;
         }
+        Position mouse = this.absolutePositionToScreenPosition(mouseX, mouseY);
+        if (mouse.y >= this.textRenderer.fontHeight * 7 && mouse.y <= this.textRenderer.fontHeight * 8 && this.pageIndex >= this.getPageCount()) {
+            this.pageIndex = this.contents.toggleFavorite(this.pageIndex);
+            this.cachedPageIndex = -1;
+            return true;
+        }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private Position absolutePositionToScreenPosition(double x, double y) {
+        return new Position(x - (this.width - 192) / 2 - 36, y - 32, 5);
     }
 
     @Override

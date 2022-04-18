@@ -67,6 +67,12 @@ public class TextCreator {
     return this;
   }
 
+  public TextCreator addNewline() {
+    this.text = new LiteralText("").append(text);
+    text.append("\n");
+    return this;
+  }
+
   public TextCreator addNewline(TextCreator message) {
     return this.addNewline(message.raw());
   }
@@ -96,8 +102,8 @@ public class TextCreator {
     return this;
   }
 
-  public TextCreator center(TextRenderer renderer) {
-    String finished = renderer.trimToWidth("                    ", 114/2-renderer.getWidth(text)/2);
+  public TextCreator center() {
+    String finished = CoordinateBook.client.textRenderer.trimToWidth("                    ", 114/2-CoordinateBook.client.textRenderer.getWidth(text)/2);
     text = new LiteralText(finished).append(text);
     return this;
   }

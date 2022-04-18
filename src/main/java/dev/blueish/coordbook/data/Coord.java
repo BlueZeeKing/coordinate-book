@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.data;
 
+import dev.blueish.coordbook.CoordinateBook;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
@@ -45,24 +46,27 @@ public class Coord {
     file.put(coords, name, color, dimension, favorite, date);
   }
 
-  public MutableText getText(int pageNum) {
-    return new TextCreator(new TranslatableText(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum).raw();
+  public TextCreator getText(int pageNum) {
+    return new TextCreator(new TranslatableText(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum);
   }
 
-  public MutableText getPage(TextRenderer renderer) {
+  public MutableText getPage() {
     return new TextCreator(name)
-                .format(color)
-                .format(Formatting.BOLD)
-                .center(renderer)
-                .addNewline(
-                    new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
-                ).addNewline(
-                    new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
-                ).addNewline(
-                  new TextCreator("\n\n\n\n\n\n").add(new TextCreator("Send").format(Formatting.BLUE).center(renderer).hover("Send to all players").send(
-                    String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
-                  ))
-                )
-                .raw();
+        .format(color)
+        .format(Formatting.BOLD)
+        .center()
+        .addNewline(
+            new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
+        ).addNewline(
+            new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
+        ).addNewline(
+          new TextCreator("\n\n\n\n")
+              .add(new TextCreator(favorite ? "Remove favorite" : "Add favorite").format(favorite ? Formatting.RED : Formatting.GOLD).center().hover(favorite ? "Remove this item from your favorites" : "Add this item to the favorites menu"))
+              .addNewline()
+              .addNewline(new TextCreator("Send").format(Formatting.BLUE).center().hover("Send to all players").send(
+                  String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
+              ))
+        )
+        .raw();
   }
 }

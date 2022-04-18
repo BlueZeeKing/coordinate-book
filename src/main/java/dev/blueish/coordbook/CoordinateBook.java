@@ -2,17 +2,10 @@ package dev.blueish.coordbook;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.argument.CoordinateArgument;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Formatting;
+import net.minecraft.util.WorldSavePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.fabricmc.api.ClientModInitializer;
@@ -39,10 +32,9 @@ public class CoordinateBook implements ClientModInitializer {
 
 	public static String ClientToName(MinecraftClient client) {
 		if (client.isInSingleplayer()) {
-			return "singleplayer";
+			return client.getServer().getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
 		} else {
-			//LOGGER.info(client.getServer().getServerIp());
-			return "multiplayer";
+			return client.getCurrentServerEntry().address;
 		}
 	}
 

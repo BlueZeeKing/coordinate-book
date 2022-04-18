@@ -5,6 +5,8 @@
 ![Mod loader: Fabric](https://img.shields.io/badge/mod%20loader-fabric-d64541?style=flat-square)
 ![Fabric API](https://img.shields.io/badge/Fabric_API-required-informational)
 ![Client](https://img.shields.io/badge/environment-client-1976d2)
+![Available For](https://img.shields.io/badge/dynamic/json?label=Available%20For&color=e64626&query=gameVersion&url=https://api.blueish.dev/api/curseforge/497362)
+ ![Downloads](https://img.shields.io/badge/dynamic/json?label=Downloads6&color=e64626&query=downloads&url=https://api.blueish.dev/api/curseforge/497362)
 ## Default Keybinds
  - `o` - Open the list of saved coordinates
  - `k` - Save the current coordinates

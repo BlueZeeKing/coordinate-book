@@ -7,7 +7,15 @@
 ![Client](https://img.shields.io/badge/environment-client-1976d2)
 ![Available For](https://img.shields.io/badge/dynamic/json?label=Available%20For&color=e64626&query=gameVersion&url=https://api.blueish.dev/api/curseforge/497362)
  ![Downloads](https://img.shields.io/badge/dynamic/json?label=Downloads6&color=e64626&query=downloads&url=https://api.blueish.dev/api/curseforge/497362)
-## Default Keybinds
- - `o` - Open the list of saved coordinates
- - `k` - Save the current coordinates
- - `r` - Open the most recent page
+# Keybinds
+- Press `o` to open the list
+- Press `k` to create a new entry
+- Press `r` to open the last opened entry
+- Press `-` to send the current coordinates in chat
+
+# Features
+
+- Book GUI to store and open coordinates
+- Unique book for each server/world
+- Send current or saved coordinates to chat
+- Easily add coordinates others have sent in chat (for now the coordinates must be sent by another person with the mod installed)

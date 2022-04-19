@@ -29,6 +29,7 @@ public class CoordinateBook implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Coordbook");
 	public static int lastPage = 0;
 	public static MinecraftClient client;
+	public Book book;
 
 	public static String ClientToName(MinecraftClient client) {
 		if (client.isInSingleplayer()) {
@@ -88,9 +89,13 @@ public class CoordinateBook implements ClientModInitializer {
 		));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			if (book == null && (client.getServer() != null || client.getCurrentServerEntry() != null)) {
+				book = new Book(client);
+			}
+
 			while (open.wasPressed()) {
 				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
-				client.setScreen(new ListScreen(new Book(client), 0));
+				client.setScreen(new ListScreen(book, 0));
 			}
 
 			while (create.wasPressed()) {
@@ -98,7 +103,7 @@ public class CoordinateBook implements ClientModInitializer {
 			}
 
 			while (open_last.wasPressed()) {
-				client.setScreen(new ListScreen(new Book(client), lastPage));
+				client.setScreen(new ListScreen(book, lastPage));
 			}
 
 			while (send_coords.wasPressed()) {

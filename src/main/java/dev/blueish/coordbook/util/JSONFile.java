@@ -106,8 +106,7 @@ public class JSONFile {
         Formatting.byName(obj.getString("color")),
         obj.getString("dimension"), obj.getBoolean("favorite"),
         LocalDateTime.ofEpochSecond(
-        obj.getInt("date"), 0, ZoneOffset.UTC),
-        this.name
+        obj.getInt("date"), 0, ZoneOffset.UTC)
       ));
     }
 

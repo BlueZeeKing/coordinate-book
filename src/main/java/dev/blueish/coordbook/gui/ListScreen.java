@@ -60,6 +60,7 @@ extends Screen {
     }
 
     public boolean setPage(int index) {
+        CoordinateBook.LOGGER.info(String.valueOf(index));
         int i = MathHelper.clamp(index, 0, this.contents.pageCount - 1);
         if (i != this.pageIndex) {
             this.pageIndex = i;
@@ -192,6 +193,7 @@ extends Screen {
 
     @Override
     public boolean handleTextClick(Style style) {
+        CoordinateBook.LOGGER.info("text click");
         ClickEvent clickEvent = style.getClickEvent();
         if (clickEvent == null) {
             return false;

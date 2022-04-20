@@ -67,12 +67,11 @@ extends Screen {
 
     protected void addCloseButton() {
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 105, 196, 100, 20, ScreenTexts.CANCEL, (button) -> { this.client.setScreen(null); }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 196, 100, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client)); } }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 196, 100, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (name != "") { CoordinateBook.book.add(new Coord(coords, name, Formatting.byName(color)  == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString())); } }));
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        CoordinateBook.LOGGER.info(String.valueOf(keyCode));
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         }
@@ -126,7 +125,7 @@ extends Screen {
                     cursor.x = Math.min(cursor.x, color.length());
                 } else if (cursor.y == 2) {
                     if (name != "") {
-                        new Coord(coords, name, Formatting.byName(color) == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString(), CoordinateBook.ClientToName(client));
+                        CoordinateBook.book.add(new Coord(coords, name, Formatting.byName(color) == null ? Formatting.BLACK : Formatting.byName(color).isColor() ? Formatting.byName(color) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString()));
                     }
                     this.client.setScreen(null);
                 }

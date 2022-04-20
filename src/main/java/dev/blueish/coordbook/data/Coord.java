@@ -18,32 +18,23 @@ public class Coord {
   public String dimension;
   public boolean favorite;
   public LocalDateTime date;
-  private JSONFile file;
 
-  public Coord(Position coords, String name, Formatting color, String dimension, String fileName) {
+  public Coord(Position coords, String name, Formatting color, String dimension) {
     this.coords = coords;
     this.name = name;
     this.color = color;
     this.dimension = dimension;
     this.favorite = false;
     this.date = LocalDateTime.now();
-    this.file = new JSONFile(fileName);
-
-    this.write();
   }
 
-  public Coord(Position coords, String name, Formatting color, String dimension, boolean favorite, LocalDateTime date, String fileName) {
+  public Coord(Position coords, String name, Formatting color, String dimension, boolean favorite, LocalDateTime date) {
     this.coords = coords;
     this.name = name;
     this.color = color;
     this.dimension = dimension;
     this.favorite = favorite;
     this.date = date;
-    this.file = new JSONFile(fileName);
-  }
-
-  public void write() {
-    file.put(coords, name, color, dimension, favorite, date);
   }
 
   public TextCreator getText(int pageNum) {

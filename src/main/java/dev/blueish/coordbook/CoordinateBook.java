@@ -29,13 +29,15 @@ public class CoordinateBook implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Coordbook");
 	public static int lastPage = 0;
 	public static MinecraftClient client;
-	public Book book;
+	public static Book book;
 
 	public static String ClientToName(MinecraftClient client) {
 		if (client.isInSingleplayer()) {
 			return client.getServer().getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
-		} else {
+		} else if (client.getCurrentServerEntry() != null) {
 			return client.getCurrentServerEntry().address;
+		} else {
+			return "global";
 		}
 	}
 
@@ -89,12 +91,10 @@ public class CoordinateBook implements ClientModInitializer {
 		));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (book == null && (client.getServer() != null || client.getCurrentServerEntry() != null)) {
+			if (book == null) {
 				book = new Book(client);
 			}
-
 			while (open.wasPressed()) {
-				//client.player.sendMessage(new LiteralText("Open was pressed!"), false);
 				client.setScreen(new ListScreen(book, 0));
 			}
 
@@ -110,7 +110,5 @@ public class CoordinateBook implements ClientModInitializer {
 				client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int)client.player.getX(), (int)client.player.getY(), (int)client.player.getZ()));
 			}
 		});
-
-		LOGGER.info("Hello Fabric world!");
 	}
 }

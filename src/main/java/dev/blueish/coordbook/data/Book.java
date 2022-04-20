@@ -23,7 +23,6 @@ public class Book {
   private int numLines;
 
   public Book(MinecraftClient client) {
-    CoordinateBook.LOGGER.info(CoordinateBook.ClientToName(client));
     this.file = new JSONFile(CoordinateBook.ClientToName(client));
 
     this.coordList = file.getAll();
@@ -45,7 +44,6 @@ public class Book {
     }
 
     for (Coord coord : favorites) {
-      CoordinateBook.LOGGER.info(coord.name);
       content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
     }
 
@@ -55,7 +53,8 @@ public class Book {
     }
 
     for (Coord coord : other) {
-      CoordinateBook.LOGGER.info(coord.name);
+      CoordinateBook.LOGGER.info(String.valueOf(coordList.indexOf(coord)));
+      CoordinateBook.LOGGER.info(String.valueOf(listPageCount));
       content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
     }
 
@@ -107,5 +106,15 @@ public class Book {
     this.listPageCount = (int)Math.ceil(numLines/13.0);
     this.pageCount = listPageCount+coordList.size();
     this.init();
+  }
+
+  public void readFile() {
+    this.coordList = file.getAll();
+  }
+
+  public void add(Coord coord) {
+    this.file.put(coord);
+    this.coordList = file.getAll();
+    regen();
   }
 }

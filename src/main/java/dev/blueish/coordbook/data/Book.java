@@ -53,8 +53,6 @@ public class Book {
     }
 
     for (Coord coord : other) {
-      CoordinateBook.LOGGER.info(String.valueOf(coordList.indexOf(coord)));
-      CoordinateBook.LOGGER.info(String.valueOf(listPageCount));
       content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
     }
 
@@ -114,7 +112,8 @@ public class Book {
 
   public void add(Coord coord) {
     this.file.put(coord);
-    this.coordList = file.getAll();
+    this.file.write();
+    this.coordList.add(coord);
     regen();
   }
 }

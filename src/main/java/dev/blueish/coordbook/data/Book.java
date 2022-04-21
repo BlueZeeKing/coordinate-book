@@ -27,12 +27,7 @@ public class Book {
 
     this.coordList = file.getAll();
 
-    favorites = coordList.stream().filter(coord -> coord.favorite).toList();
-    other = coordList.stream().filter(coord -> !coord.favorite).toList();
-
-    this.numLines = 1 + (favorites.size() > 0 ? 2 + favorites.size() : 0) + (other.size() > 0 ? 2 + other.size() : 0);
-    this.listPageCount = (int)Math.ceil(numLines/14.0);
-    this.pageCount = listPageCount+coordList.size();
+    regen();
   }
 
   public Book init() {
@@ -78,8 +73,8 @@ public class Book {
   }
 
   public void delete(int index) {
+    this.coordList.remove(index - listPageCount);
     this.file.delete(index - listPageCount);
-    this.coordList = file.getAll();
     regen();
     CoordinateBook.lastPage = 0;
   }
@@ -106,14 +101,12 @@ public class Book {
     this.init();
   }
 
-  public void readFile() {
-    this.coordList = file.getAll();
-  }
-
   public void add(Coord coord) {
     this.file.put(coord);
     this.file.write();
+
     this.coordList.add(coord);
+
     regen();
   }
 }

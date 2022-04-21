@@ -54,7 +54,7 @@ extends Screen {
 
     public ListScreen(Book pageProvider, int startPage) {
         super(NarratorManager.EMPTY);
-        this.contents = pageProvider.init();
+        this.contents = pageProvider;
         this.pageTurnSound = true;
         this.pageIndex = startPage;
     }

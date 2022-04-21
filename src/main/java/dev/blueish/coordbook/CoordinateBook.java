@@ -94,6 +94,7 @@ public class CoordinateBook implements ClientModInitializer {
 			if (book == null) {
 				book = new Book(client);
 			}
+			
 			while (open.wasPressed()) {
 				client.setScreen(new ListScreen(book, 0));
 			}

@@ -1,7 +1,6 @@
 package dev.blueish.coordbook.util;
 
 import dev.blueish.coordbook.CoordinateBook;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 

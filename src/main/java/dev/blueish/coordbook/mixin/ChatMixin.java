@@ -3,7 +3,6 @@ package dev.blueish.coordbook.mixin;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.NetworkThreadUtils;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

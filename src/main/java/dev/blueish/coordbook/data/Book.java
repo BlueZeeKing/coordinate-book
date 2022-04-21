@@ -7,8 +7,6 @@ import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.util.JSONFile;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.command.argument.CoordinateArgument;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 

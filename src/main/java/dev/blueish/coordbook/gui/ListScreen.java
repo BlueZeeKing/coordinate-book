@@ -6,7 +6,6 @@ import java.util.List;
 
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Book;
-import dev.blueish.coordbook.data.Coord;
 import dev.blueish.coordbook.data.Position;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;

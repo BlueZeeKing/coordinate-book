@@ -23,14 +23,12 @@ public class JSONFile {
   private File file;
   private String contents = "";
   private JSONArray json;
-  private String name;
 
   public JSONFile(String name) {
     try {
       new File("./coordbook").mkdir();
 
       this.path = "./coordbook/" + name;
-      this.name = name;
 
       this.file = new File(path + ".json");
       boolean created = file.createNewFile();

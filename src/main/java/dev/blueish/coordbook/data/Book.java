@@ -74,7 +74,7 @@ public class Book {
     this.coordList.remove(index - listPageCount);
     this.file.delete(index - listPageCount);
     regen();
-    CoordinateBook.lastPage = 0;
+    CoordinateBook.lastPage = -1;
   }
 
   public int toggleFavorite(int i) {

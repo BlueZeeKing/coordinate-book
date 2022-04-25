@@ -81,6 +81,11 @@ public class TextCreator {
     return this;
   }
 
+  public TextCreator style(Style style) {
+    text.setStyle(style);
+    return this;
+  }
+
   public TextCreator hover(String message) {
     text.styled(s -> s.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(message))));
     return this;
@@ -93,6 +98,11 @@ public class TextCreator {
 
   public TextCreator send(String command) {
     text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)));
+    return this;
+  }
+
+  public TextCreator copy(String command) {
+    text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, command)));
     return this;
   }
 

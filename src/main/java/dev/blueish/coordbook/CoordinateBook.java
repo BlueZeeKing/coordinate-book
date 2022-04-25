@@ -27,7 +27,7 @@ public class CoordinateBook implements ClientModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("Coordbook");
-	public static int lastPage = 0;
+	public static int lastPage = -1;
 	public static MinecraftClient client;
 	public static Book book;
 

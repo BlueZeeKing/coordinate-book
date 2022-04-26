@@ -6,5 +6,9 @@
   "category.coordbook.coordbook": "Coordinate Book",
   "minecraft:overworld": "O",
   "minecraft:the_nether": "N",
-  "minecraft:the_end": "E"
+  "minecraft:the_end": "E",
+  "coordbook.midnightconfig.overlay": "Enable the coordinate overlay",
+  "coordbook.midnightconfig.chatText": "Chat Options",
+  "coordbook.midnightconfig.chatReplace": "Replace chat sent by this mod",
+  "coordbook.midnightconfig.allChatReplace": "Replace coordinates in chat: "
 }

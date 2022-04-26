@@ -2,6 +2,7 @@ package dev.blueish.coordbook;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import dev.blueish.coordbook.util.Config;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
@@ -43,6 +44,8 @@ public class CoordinateBook implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		Config.init("coordbook", Config.class);
+
 		KeyBinding open = KeyBindingHelper
 				.registerKeyBinding(new KeyBinding("key.coordbook.open",
 						InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_O, "category.coordbook.coordbook"));

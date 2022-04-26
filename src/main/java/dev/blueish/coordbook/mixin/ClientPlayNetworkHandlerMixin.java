@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.mixin;
 
+import dev.blueish.coordbook.util.Config;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.NetworkThreadUtils;
@@ -27,7 +28,7 @@ public class ClientPlayNetworkHandlerMixin {
 
     sender.reset();
 
-    if (sender.find()) {
+    if (sender.find() && Config.chatReplace) {
       Matcher wName = Pattern.compile("(.*) - (-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(text);
       Matcher woName = Pattern.compile("(-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(text);
 
@@ -70,7 +71,7 @@ public class ClientPlayNetworkHandlerMixin {
                 packet.getSender());
         ci.cancel();
       }
-    } else if (anyCoords.find()) {
+    } else if (anyCoords.find() && Config.allChatReplace) {
       NetworkThreadUtils.forceMainThread(packet, ((ClientPlayNetworkHandler) (Object) this), CoordinateBook.client);
       CoordinateBook.client.inGameHud.addChatMessage(packet.getType(),
           new TextCreator(anyCoords.group(1)).style(packet.getMessage().getStyle())

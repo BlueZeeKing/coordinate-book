@@ -1,6 +1,7 @@
 package dev.blueish.coordbook.mixin;
 
 import dev.blueish.coordbook.gui.CoordOverlay;
+import dev.blueish.coordbook.util.Config;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -22,7 +23,7 @@ public class InGameHudMixin {
 
     @Inject(method = "render", at = @At("HEAD"))
     public void render(MatrixStack matrices, float tickDelta, CallbackInfo ci) {
-        if (CoordinateBook.lastPage > 0) {
+        if (CoordinateBook.lastPage > 0 && Config.overlay) {
             overlay.render(matrices);
         }
     }

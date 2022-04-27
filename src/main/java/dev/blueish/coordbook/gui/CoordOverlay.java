@@ -2,6 +2,7 @@ package dev.blueish.coordbook.gui;
 
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Coord;
+import dev.blueish.coordbook.util.Config;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
@@ -20,6 +21,10 @@ public class CoordOverlay extends DrawableHelper {
             lastName = coord.name;
             cachedText = new TextCreator(coord.name).format(coord.color == Formatting.BLACK ? Formatting.WHITE : coord.color).format(Formatting.BOLD).addNoFormat(new TextCreator(String.format(": %d/%d/%d", coord.coords.x, coord.coords.y, coord.coords.z)).format(Formatting.WHITE)).raw();
         }
-        client.textRenderer.draw(matrices, cachedText, client.getWindow().getScaledWidth() - client.textRenderer.getWidth(cachedText) - 10, 10, Formatting.WHITE.getColorValue());
+
+        int x = Config.xPos == Config.XPosition.RIGHT ? client.getWindow().getScaledWidth() - client.textRenderer.getWidth(cachedText) - 10 : 10;
+        int y = Config.yPos == Config.YPosition.BOTTOM ? client.getWindow().getScaledHeight() - client.textRenderer.fontHeight - 10 : 10;
+
+        client.textRenderer.draw(matrices, cachedText, x, y, Formatting.WHITE.getColorValue());
     }
 }

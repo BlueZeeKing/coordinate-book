@@ -7,8 +7,17 @@
   "minecraft:overworld": "O",
   "minecraft:the_nether": "N",
   "minecraft:the_end": "E",
+  "coordbook.midnightconfig.title": "§lCoordinate Book",
   "coordbook.midnightconfig.overlay": "Enable the coordinate overlay",
-  "coordbook.midnightconfig.chatText": "Chat Options",
+  "coordbook.midnightconfig.chatText": "§lChat Options",
   "coordbook.midnightconfig.chatReplace": "Replace chat sent by this mod",
-  "coordbook.midnightconfig.allChatReplace": "Replace coordinates in chat: "
+  "coordbook.midnightconfig.allChatReplace": "Replace coordinates in chat: ",
+  "coordbook.midnightconfig.positionText": "§lPosition of the Coordinate Overlay",
+  "coordbook.midnightconfig.xPos": "Horizontal Location:",
+  "coordbook.midnightconfig.yPos": "Vertical Location:",
+  "coordbook.midnightconfig.enum.XPosition.LEFT": "Left",
+  "coordbook.midnightconfig.enum.XPosition.RIGHT": "Right",
+  "coordbook.midnightconfig.enum.YPosition.TOP": "Top",
+  "coordbook.midnightconfig.enum.YPosition.BOTTOM": "Bottom"
+
 }

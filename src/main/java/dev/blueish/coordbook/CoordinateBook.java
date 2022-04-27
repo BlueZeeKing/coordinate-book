@@ -107,7 +107,7 @@ public class CoordinateBook implements ClientModInitializer {
 			}
 
 			while (open_last.wasPressed()) {
-				client.setScreen(new ListScreen(book, lastPage));
+				client.setScreen(new ListScreen(book, lastPage == -1 ? 0 : lastPage));
 			}
 
 			while (send_coords.wasPressed()) {

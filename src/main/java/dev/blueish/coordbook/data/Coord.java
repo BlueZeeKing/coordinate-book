@@ -1,10 +1,13 @@
 package dev.blueish.coordbook.data;
 
+import dev.blueish.coordbook.CoordinateBook;
 import net.minecraft.util.Formatting;
 import java.time.LocalDateTime;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.TranslatableText;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import dev.blueish.coordbook.util.TextCreator;
 
@@ -35,7 +38,7 @@ public class Coord {
   }
 
   public TextCreator getText(int pageNum) {
-    return new TextCreator(new TranslatableText(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum);
+    return new TextCreator(convert(dimension)).format(Formatting.GRAY).add(" ").add(new TextCreator(name).format(color).hover(String.format("%d/%d/%d", coords.x, coords.y, coords.z))).click(pageNum);
   }
 
   public MutableText getPage() {
@@ -44,7 +47,7 @@ public class Coord {
         .format(Formatting.BOLD)
         .center()
         .addNewline(
-            new TextCreator(new TranslatableText(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
+            new TextCreator(convert(dimension)).filler("-").add(new TextCreator(String.format("%d/%d/%d", coords.x, coords.y, coords.z)))
         ).addNewline(
             new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
         ).addNewline(
@@ -64,5 +67,15 @@ public class Coord {
             )
           )
         .raw();
+  }
+
+  private String convert(String input) {
+    CoordinateBook.LOGGER.info(input);
+    Matcher regex = Pattern.compile(".*?:(?:the_)*(.).*").matcher(input);
+    if (regex.matches()) {
+      CoordinateBook.LOGGER.info("Match");
+      return regex.group(1).toUpperCase();
+    }
+    return "O";
   }
 }

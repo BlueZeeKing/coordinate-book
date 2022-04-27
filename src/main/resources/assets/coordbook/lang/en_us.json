@@ -4,9 +4,6 @@
   "key.coordbook.open_last": "Open last page",
   "key.coordbook.send_coords": "Send Current Coordinates",
   "category.coordbook.coordbook": "Coordinate Book",
-  "minecraft:overworld": "O",
-  "minecraft:the_nether": "N",
-  "minecraft:the_end": "E",
   "coordbook.midnightconfig.title": "§lCoordinate Book",
   "coordbook.midnightconfig.overlay": "Enable the coordinate overlay",
   "coordbook.midnightconfig.chatText": "§lChat Options",
@@ -19,5 +16,4 @@
   "coordbook.midnightconfig.enum.XPosition.RIGHT": "Right",
   "coordbook.midnightconfig.enum.YPosition.TOP": "Top",
   "coordbook.midnightconfig.enum.YPosition.BOTTOM": "Bottom"
-
 }

@@ -22,6 +22,8 @@ import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.data.Position;
 import dev.blueish.coordbook.gui.CreateScreen;
 
+import java.util.Objects;
+
 
 public class CoordinateBook implements ClientModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -34,7 +36,7 @@ public class CoordinateBook implements ClientModInitializer {
 
 	public static String ClientToName(MinecraftClient client) {
 		if (client.isInSingleplayer()) {
-			return client.getServer().getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
+			return Objects.requireNonNull(client.getServer()).getSavePath(WorldSavePath.ROOT).getParent().getFileName().toString();
 		} else if (client.getCurrentServerEntry() != null) {
 			return client.getCurrentServerEntry().address;
 		} else {
@@ -65,9 +67,7 @@ public class CoordinateBook implements ClientModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
-			CoordinateBook.client = client;
-		});
+		ClientLifecycleEvents.CLIENT_STARTED.register(client -> CoordinateBook.client = client);
 
 		ClientCommandManager.DISPATCHER.register(ClientCommandManager.literal("coordbook").then(
 			ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
@@ -103,7 +103,9 @@ public class CoordinateBook implements ClientModInitializer {
 			}
 
 			while (create.wasPressed()) {
-				client.setScreen(new CreateScreen(new Position(client.player.getX(), client.player.getY(), client.player.getZ())));
+				if (client.player != null) {
+					client.setScreen(new CreateScreen(new Position(client.player.getX(), client.player.getY(), client.player.getZ())));
+				}
 			}
 
 			while (open_last.wasPressed()) {
@@ -111,7 +113,9 @@ public class CoordinateBook implements ClientModInitializer {
 			}
 
 			while (send_coords.wasPressed()) {
-				client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int)client.player.getX(), (int)client.player.getY(), (int)client.player.getZ()));
+				if (client.player != null) {
+					client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()));
+				}
 			}
 		});
 	}

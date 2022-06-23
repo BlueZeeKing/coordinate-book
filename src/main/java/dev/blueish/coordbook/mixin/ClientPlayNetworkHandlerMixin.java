@@ -1,22 +1,19 @@
 package dev.blueish.coordbook.mixin;
 
+import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.util.Config;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.message.MessageSender;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SignedMessage;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-
-import dev.blueish.coordbook.CoordinateBook;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
-import dev.blueish.coordbook.data.Book;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.regex.Matcher;

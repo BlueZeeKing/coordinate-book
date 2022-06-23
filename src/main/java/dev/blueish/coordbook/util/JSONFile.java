@@ -1,30 +1,22 @@
 package dev.blueish.coordbook.util;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
-import java.io.FileWriter;
-
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.util.Formatting;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-
-import java.util.ArrayList;
-
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Coord;
 import dev.blueish.coordbook.data.Position;
+import net.minecraft.util.Formatting;
 
-import com.google.gson.annotations.SerializedName;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 public class JSONFile {
     private static final Gson gson = new GsonBuilder()

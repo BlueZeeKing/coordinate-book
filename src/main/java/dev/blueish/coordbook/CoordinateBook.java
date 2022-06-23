@@ -2,25 +2,23 @@ package dev.blueish.coordbook;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import dev.blueish.coordbook.util.Config;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.WorldSavePath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import net.fabricmc.api.ClientModInitializer;
-
-import org.lwjgl.glfw.GLFW;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-
-import dev.blueish.coordbook.gui.ListScreen;
 import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.data.Position;
 import dev.blueish.coordbook.gui.CreateScreen;
+import dev.blueish.coordbook.gui.ListScreen;
+import dev.blueish.coordbook.util.Config;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.WorldSavePath;
+import org.lwjgl.glfw.GLFW;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 

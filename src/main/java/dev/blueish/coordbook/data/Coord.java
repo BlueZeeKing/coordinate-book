@@ -2,17 +2,14 @@ package dev.blueish.coordbook.data;
 
 import com.google.gson.annotations.SerializedName;
 import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.util.TextCreator;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
 import java.time.LocalDateTime;
-
-import net.minecraft.text.MutableText;
-
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import dev.blueish.coordbook.util.TextCreator;
 
 public class Coord {
     @SerializedName("coords")

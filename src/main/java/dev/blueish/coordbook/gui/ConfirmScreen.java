@@ -6,7 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.*;
+import net.minecraft.text.StringVisitable;
 import net.minecraft.util.Formatting;
 
 @Environment(value = EnvType.CLIENT)

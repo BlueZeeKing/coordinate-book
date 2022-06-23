@@ -1,14 +1,13 @@
 package dev.blueish.coordbook.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.util.JSONFile;
 import dev.blueish.coordbook.util.TextCreator;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Book {
     public ArrayList<Coord> coordList;

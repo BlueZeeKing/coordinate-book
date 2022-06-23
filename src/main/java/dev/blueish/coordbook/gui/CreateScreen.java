@@ -2,18 +2,17 @@ package dev.blueish.coordbook.gui;
 
 import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Coord;
+import dev.blueish.coordbook.data.Position;
+import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.*;
+import net.minecraft.text.StringVisitable;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-
-import dev.blueish.coordbook.util.TextCreator;
-import dev.blueish.coordbook.data.Position;
-
-import net.minecraft.client.gui.widget.TextFieldWidget;
 
 @Environment(value = EnvType.CLIENT)
 public class CreateScreen extends BookScreen {

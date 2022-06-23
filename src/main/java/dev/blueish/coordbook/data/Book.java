@@ -17,6 +17,7 @@ public class Book {
 
     public Book() {
         Coord[] arr = JSONFile.read(CoordinateBook.clientToName());
+        CoordinateBook.LOGGER.info(String.valueOf(arr));
         arr = arr != null ? arr : new Coord[0];
         this.coordList = new ArrayList<>(List.of(arr));
 
@@ -56,6 +57,12 @@ public class Book {
         CoordinateBook.lastPage = index + listPageCount;
 
         return index + listPageCount;
+    }
+
+    public boolean getFavorite(int i) {
+        int index = i - listPageCount;
+        Coord coord = this.coordList.get(index);
+        return coord.favorite;
     }
 
     private void regen() {

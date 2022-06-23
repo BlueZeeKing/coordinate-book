@@ -53,9 +53,7 @@ public class Coord {
             ).addNewline(
                 new TextCreator(date.format(DateTimeFormatter.ofPattern("MM/dd hh:mm a")))
             ).addNewline(
-                new TextCreator("\n\n\n\n")
-                    .add(new TextCreator(favorite ? "Remove favorite" : "Add favorite").format(favorite ? Formatting.RED : Formatting.GOLD).center().hover(favorite ? "Remove this item from your favorites" : "Add this item to the favorites menu"))
-                    .addNewline()
+                new TextCreator("\n\n\n")
                     .addNewline(
                         new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").send(
                                 String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)

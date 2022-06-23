@@ -13,6 +13,7 @@ public class ListScreen extends BookScreen {
     private final Book contents;
     private int lastListPage = 0;
     private ButtonWidget deleteButton;
+    private ButtonWidget favoriteButton;
 
     public ListScreen(Book pageProvider, int startPage) {
         super();
@@ -53,10 +54,20 @@ public class ListScreen extends BookScreen {
         this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> {
             this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListPage));
         }));
+        this.favoriteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 110, 100, 20, new TextCreator("Toggle favorite").format(Formatting.GOLD).raw(), button -> {
+            this.contents.toggleFavorite(this.pageIndex);
+            updateDeleteButton();
+        }));
         updateDeleteButton();
     }
 
     private void updateDeleteButton() {
-        this.deleteButton.visible = this.pageIndex >= getPageCount();
+        boolean isIndividual = this.pageIndex >= getPageCount();
+        this.deleteButton.visible = isIndividual;
+        this.favoriteButton.visible = isIndividual;
+        if (isIndividual) {
+            boolean favorite = this.contents.getFavorite(this.pageIndex);
+            this.favoriteButton.setMessage(new TextCreator(favorite ? "Remove favorite" : "Add favorite").format(favorite ? Formatting.RED : Formatting.GOLD).raw());
+        }
     }
 }

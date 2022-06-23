@@ -8,7 +8,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.util.Formatting;
 
-@Environment(value=EnvType.CLIENT)
+@Environment(value = EnvType.CLIENT)
 public class ListScreen extends BookScreen {
     private final Book contents;
     private int lastListPage = 0;
@@ -50,7 +50,9 @@ public class ListScreen extends BookScreen {
     }
 
     private void addDeleteButton() {
-        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> { this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListPage)); }));
+        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> {
+            this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListPage));
+        }));
         updateDeleteButton();
     }
 

@@ -11,100 +11,92 @@ import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
 public class Book {
-  public ArrayList<Coord> coordList;
-  public int pageCount;
-  private final JSONFile file;
-  public int listPageCount;
-  private ArrayList<TextCreator> content;
-  private List<Coord> favorites;
-  private List<Coord> other;
-  private int numLines;
+    public ArrayList<Coord> coordList;
+    public int pageCount;
+    public int listPageCount;
+    private ArrayList<TextCreator> content;
 
-  public Book(MinecraftClient client) {
-    this.file = new JSONFile(CoordinateBook.ClientToName(client));
+    public Book() {
+        Coord[] arr = JSONFile.read(CoordinateBook.clientToName());
+        arr = arr != null ? arr : new Coord[0];
+        this.coordList = new ArrayList<>(List.of(arr));
 
-    this.coordList = file.getAll();
-
-    regen();
-  }
-
-  public Book init() {
-    content = new ArrayList<TextCreator>();
-    content.add(new TextCreator("Coordinate Book").format(Formatting.BOLD).center());
-    if (favorites.size() > 0) {
-      content.add(new TextCreator(""));
-      content.add(new TextCreator("Favorites").format(Formatting.GOLD));
+        regen();
     }
 
-    for (Coord coord : favorites) {
-      content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
-    }
+    public MutableText getPage(int index) {
+        if (index < listPageCount) {
+            TextCreator content = new TextCreator("");
+            for (int i = index * 13 + (index == 0 ? 0 : 1); i < Math.min(index * 13 + 14, this.content.size()); i++) {
+                if (i == index * 13) {
+                    content.addNoFormat(this.content.get(i));
+                } else {
+                    content.addNewline(this.content.get(i));
+                }
+            }
+            return content.raw();
 
-    if (other.size() > 0) {
-      content.add(new TextCreator(""));
-      content.add(new TextCreator("Other").format(Formatting.DARK_GRAY));
-    }
-
-    for (Coord coord : other) {
-      content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
-    }
-
-    return this;
-  }
-
-  public MutableText getPage(int index) {
-    if (index < listPageCount) {
-      TextCreator content = new TextCreator("");
-      for (int i = index * 13 + (index == 0 ? 0 : 1); i < Math.min(index * 13 + 14, this.content.size()); i++) {
-        if (i == index * 13) {
-          content.addNoFormat(this.content.get(i));
-        } else {
-          content.addNewline(this.content.get(i));
+        } else if (index < pageCount) {
+            return coordList.get(index - listPageCount).getPage();
         }
-      }
-      return content.raw();
-
-    } else if (index < pageCount) {
-      return coordList.get(index - listPageCount).getPage();
+        return null;
     }
-    return null;
-  }
 
-  public void delete(int index) {
-    this.coordList.remove(index - listPageCount);
-    this.file.delete(index - listPageCount);
-    regen();
-    CoordinateBook.lastPage = -1;
-  }
+    public void delete(int index) {
+        this.coordList.remove(index - listPageCount);
+        regen();
+        CoordinateBook.lastPage = -1;
+    }
 
-  public int toggleFavorite(int i) {
-    int index = i - listPageCount;
-    Coord coord = this.coordList.get(index);
-    coord.favorite = !coord.favorite;
-    this.file.rewrite(coordList);
+    public int toggleFavorite(int i) {
+        int index = i - listPageCount;
+        Coord coord = this.coordList.get(index);
+        coord.favorite = !coord.favorite;
 
-    regen();
-    CoordinateBook.lastPage = index + listPageCount;
+        regen();
+        CoordinateBook.lastPage = index + listPageCount;
 
-    return index + listPageCount;
-  }
+        return index + listPageCount;
+    }
 
-  private void regen() {
-    favorites = coordList.stream().filter(coord -> coord.favorite).toList();
-    other = coordList.stream().filter(coord -> !coord.favorite).toList();
+    private void regen() {
+        List<Coord> favorites = coordList.stream().filter(coord -> coord.favorite).toList();
+        List<Coord> other = coordList.stream().filter(coord -> !coord.favorite).toList();
 
-    this.numLines = 1 + (favorites.size() > 0 ? 2 + favorites.size() : 0) + (other.size() > 0 ? 2 + other.size() : 0);
-    this.listPageCount = (int)Math.ceil(numLines/13.0);
-    this.pageCount = listPageCount+coordList.size();
-    this.init();
-  }
+        int numLines = 1 + (favorites.size() > 0 ? 2 + favorites.size() : 0) + (other.size() > 0 ? 2 + other.size() : 0);
+        this.listPageCount = (int) Math.ceil(numLines / 13.0);
+        this.pageCount = listPageCount + coordList.size();
 
-  public void add(Coord coord) {
-    this.file.put(coord);
-    this.file.write();
+        Coord[] arr = new Coord[coordList.size()];
+        arr = coordList.toArray(arr);
+        JSONFile.write(CoordinateBook.clientToName(), arr);
 
-    this.coordList.add(coord);
+        content = new ArrayList<TextCreator>();
+        content.add(new TextCreator("Coordinate Book").format(Formatting.BOLD).center());
+        if (favorites.size() > 0) {
+            content.add(new TextCreator(""));
+            content.add(new TextCreator("Favorites").format(Formatting.GOLD));
+        }
 
-    regen();
-  }
+        for (Coord coord : favorites) {
+            content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
+        }
+
+        if (other.size() > 0) {
+            content.add(new TextCreator(""));
+            content.add(new TextCreator("Other").format(Formatting.DARK_GRAY));
+        }
+
+        for (Coord coord : other) {
+            content.add(coord.getText(coordList.indexOf(coord) + listPageCount + 1));
+        }
+    }
+
+    public void add(Coord coord) {
+        this.coordList.add(coord);
+
+        CoordinateBook.LOGGER.info(String.valueOf(coordList));
+
+        regen();
+    }
 }

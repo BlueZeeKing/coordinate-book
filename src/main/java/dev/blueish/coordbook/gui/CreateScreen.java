@@ -1,8 +1,12 @@
 package dev.blueish.coordbook.gui;
 
+import dev.blueish.coordbook.CoordinateBook;
+import dev.blueish.coordbook.data.Coord;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
@@ -11,7 +15,7 @@ import dev.blueish.coordbook.data.Position;
 
 import net.minecraft.client.gui.widget.TextFieldWidget;
 
-@Environment(value=EnvType.CLIENT)
+@Environment(value = EnvType.CLIENT)
 public class CreateScreen extends BookScreen {
     private String name = "";
     private final Position pos;
@@ -37,12 +41,16 @@ public class CreateScreen extends BookScreen {
     }
 
     private void addWidgets() {
-        int bookXPos = (this.width - WIDTH)/2;
-        this.nameEntry = this.addDrawableChild(new TextFieldWidget(this.textRenderer, bookXPos + 35, 60, 100, 10, new LiteralText("Name")));
-        this.colorEntry = this.addDrawableChild(new TextFieldWidget(this.textRenderer, bookXPos + 35, 87, 100, 10, new LiteralText("Name")));
+        int bookXPos = (this.width - WIDTH) / 2;
+        this.nameEntry = this.addDrawableChild(new TextFieldWidget(this.textRenderer, bookXPos + 35, 60, 100, 10, Text.of("Name")));
+        this.colorEntry = this.addDrawableChild(new TextFieldWidget(this.textRenderer, bookXPos + 35, 87, 100, 10, Text.of("Color")));
         this.nameEntry.setText(name);
-        //this.nameEntry.setDrawsBackground(false);
-        //this.colorEntry.setDrawsBackground(false);
+    }
+
+    @Override
+    protected void addCloseButton() {
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 105, 196, 100, 20, ScreenTexts.CANCEL, (button) -> { this.client.setScreen(null); }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 196, 100, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (nameEntry.getText() != "") { CoordinateBook.book.add(new Coord(pos, nameEntry.getText(), Formatting.byName(colorEntry.getText())  == null ? Formatting.BLACK : Formatting.byName(colorEntry.getText()).isColor() ? Formatting.byName(colorEntry.getText()) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString())); } }));
     }
 
     @Override

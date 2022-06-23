@@ -1,14 +1,20 @@
 package dev.blueish.coordbook.util;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import java.io.FileWriter;
-import org.json.JSONException;
+
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import net.minecraft.util.Formatting;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -18,110 +24,107 @@ import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Coord;
 import dev.blueish.coordbook.data.Position;
 
+import com.google.gson.annotations.SerializedName;
+
 public class JSONFile {
-  private String path;
-  private File file;
-  private String contents = "";
-  private JSONArray json;
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .registerTypeAdapter(Formatting.class, new TypeAdapter<Formatting>() {
+                @Override
+                public Formatting read(JsonReader reader) throws JsonParseException, IOException {
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        if (reader.nextName().equals("color")) {
+                            return Formatting.byName(reader.nextString());
+                        }
+                    }
 
-  public JSONFile(String name) {
-    try {
-      new File("./coordbook").mkdir();
+                    return null;
+                }
 
-      this.path = "./coordbook/" + name;
+                @Override
+                public void write(JsonWriter writer, Formatting formatting) throws JsonParseException, IOException {
+                    writer.value(formatting.getName());
+                }
+            })
+            .registerTypeAdapter(LocalDateTime.class, new TypeAdapter<LocalDateTime>() {
+                @Override
+                public LocalDateTime read(JsonReader reader) throws JsonParseException, IOException {
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        if (reader.nextName().equals("date")) {
+                            return LocalDateTime.ofEpochSecond(reader.nextInt(), 0, ZoneOffset.UTC);
+                        }
+                    }
 
-      this.file = new File(path + ".json");
-      boolean created = file.createNewFile();
+                    return null;
+                }
 
-      Scanner reader = new Scanner(file);
+                @Override
+                public void write(JsonWriter writer, LocalDateTime date) throws JsonParseException, IOException {
+                    writer.value(date.toEpochSecond(ZoneOffset.UTC));
+                }
+            })
+            .registerTypeAdapter(Position.class, new TypeAdapter<Position>() {
+                @Override
+                public Position read(JsonReader reader) throws JsonParseException, IOException {
+                    reader.beginObject();
+                    int x = 0;
+                    int y = 0;
+                    int z = 0;
 
-      while (reader.hasNextLine()) {
-        contents = contents + reader.nextLine();
-      }
-      reader.close();
+                    while (reader.hasNext()) {
+                        switch (reader.nextName()) {
+                            case "x" -> x = reader.nextInt();
+                            case "y" -> y = reader.nextInt();
+                            case "z" -> z = reader.nextInt();
+                        }
+                    }
+                    return new Position(x, y, z);
+                }
 
-      if (created || contents == "") {
-        this.contents = "[]";
-      }
+                @Override
+                public void write(JsonWriter writer, Position position) throws JsonParseException, IOException {
+                    writer.beginObject();
+                    writer.name("x").value(position.x);
+                    writer.name("y").value(position.y);
+                    writer.name("z").value(position.z);
+                    writer.endObject();
+                }
+            })
+            .create();
+    ;
 
-      this.json = new JSONArray(contents);
-    } catch (IOException e) {
-      CoordinateBook.LOGGER.error("A write error occurred.");
-      e.printStackTrace();
-    } catch (JSONException e) {
-      CoordinateBook.LOGGER.error("A json parse error occurred.");
-      e.printStackTrace();
-    }
-  }
+    public static Coord[] read(String name) {
+        try {
+            new File("./coordbook").mkdir();
 
-  public void write() {
-    try {
-      FileWriter writer = new FileWriter(path + ".json");
-      writer.write(json.toString());
-      writer.close();
-    } catch (IOException e) {
-      CoordinateBook.LOGGER.error("A write error occurred.");
-      e.printStackTrace();
-    }
-  }
+            File file = new File("./coordbook/" + name + ".json");
+            file.createNewFile();
 
-  public void put(Position coords, String name, Formatting color, String dimension, boolean favorite, LocalDateTime date) {
-    JSONObject obj = new JSONObject();
-
-    obj.put("coords", coords.getJSON());
-    obj.put("name", name);
-    obj.put("color", color.getName());
-    obj.put("dimension", dimension);
-    obj.put("favorite", favorite);
-    obj.put("date", date.toEpochSecond(ZoneOffset.UTC));
-
-    json.put(obj);
-
-    this.write();
-  }
-
-  public void put(Coord coord) {
-    JSONObject obj = new JSONObject();
-
-    obj.put("coords", coord.coords.getJSON());
-    obj.put("name", coord.name);
-    obj.put("color", coord.color.getName());
-    obj.put("dimension", coord.dimension);
-    obj.put("favorite", coord.favorite);
-    obj.put("date", coord.date.toEpochSecond(ZoneOffset.UTC));
-
-    json.put(obj);
-  }
-
-  public ArrayList<Coord> getAll() {
-    ArrayList<Coord> res = new ArrayList<Coord>();
-
-    for (int i = 0; i < json.length(); i++) {
-      JSONObject obj = json.getJSONObject(i);
-      res.add(new Coord(
-        new Position(obj.getJSONObject("coords")),
-        obj.getString("name"), 
-        Formatting.byName(obj.getString("color")),
-        obj.getString("dimension"), obj.getBoolean("favorite"),
-        LocalDateTime.ofEpochSecond(
-        obj.getInt("date"), 0, ZoneOffset.UTC)
-      ));
+            return gson.fromJson(new FileReader(file), Coord[].class);
+        } catch (IOException e) {
+            CoordinateBook.LOGGER.error("A write error occurred.");
+            e.printStackTrace();
+        }
+        return new Coord[0];
     }
 
-    return res;
-  }
+    public static void write(String name, Coord[] data) {
+        try {
+            new File("./coordbook").mkdir();
 
-  public void delete(int index) {
-    this.json.remove(index);
-    this.write();
-  }
+            File file = new File("./coordbook/" + name + ".json");
+            file.createNewFile();
 
-  public void rewrite(ArrayList<Coord> coords) {
-    this.json = new JSONArray();
-    for (Coord coord : coords) {
-      this.put(coord);
+            FileWriter writer = new FileWriter(file);
+            gson.toJson(data, writer);
+            writer.close();
+
+        } catch (IOException e) {
+            CoordinateBook.LOGGER.error("A write error occurred.");
+            e.printStackTrace();
+        }
     }
-
-    this.write();
-  }
 }

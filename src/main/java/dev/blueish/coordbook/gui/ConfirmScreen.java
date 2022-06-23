@@ -4,12 +4,12 @@ import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
-@Environment(value=EnvType.CLIENT)
+@Environment(value = EnvType.CLIENT)
 public class ConfirmScreen extends BookScreen {
     private final int index;
     private final Book book;
@@ -25,7 +25,10 @@ public class ConfirmScreen extends BookScreen {
     @Override
     protected void init() {
         this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, 60, 50, 20, new TextCreator("Cancel").format(Formatting.GRAY).raw(), (button) -> this.client.setScreen(new ListScreen(book, index))));
-        this.addDrawableChild(new ButtonWidget(this.width / 2, 60, 50, 20, new TextCreator("Confirm").format(Formatting.RED).raw(), (button) -> { book.delete(index); this.client.setScreen(new ListScreen(book, returnIndex)); }));
+        this.addDrawableChild(new ButtonWidget(this.width / 2, 60, 50, 20, new TextCreator("Confirm").format(Formatting.RED).raw(), (button) -> {
+            book.delete(index);
+            this.client.setScreen(new ListScreen(book, returnIndex));
+        }));
         this.addCloseButton();
     }
 

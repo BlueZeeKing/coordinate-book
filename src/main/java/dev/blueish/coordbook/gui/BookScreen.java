@@ -3,12 +3,12 @@ package dev.blueish.coordbook.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.blueish.coordbook.CoordinateBook;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -26,7 +26,7 @@ public class BookScreen extends Screen {
     private List<OrderedText> cachedPage = Collections.emptyList();
     int cachedPageIndex = -1;
     int pageIndex = 0;
-    private Text pageIndexText = LiteralText.EMPTY;
+    private Text pageIndexText;
     int pageCount;
 
     private PageTurnWidget nextPageButton;
@@ -85,7 +85,7 @@ public class BookScreen extends Screen {
     }
 
     public StringVisitable getPage(int i) {
-        return LiteralText.EMPTY;
+        return null;
     }
 
     public int getPageCount() {
@@ -99,23 +99,23 @@ public class BookScreen extends Screen {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BOOK_TEXTURE);
 
-        int bookXPos = (this.width - WIDTH)/2; // get the book position
+        int bookXPos = (this.width - WIDTH) / 2; // get the book position
         this.drawTexture(matrices, bookXPos, 2, 0, 0, WIDTH, HEIGHT);
 
         if (pageIndex != cachedPageIndex) { // if the page has changed
             cachedPage = this.textRenderer.wrapLines(getPage(pageIndex), MAX_TEXT_WIDTH); // regenerate the content
-            this.pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, this.getPageCount()); // create the page number indicator
+            this.pageIndexText = Text.translatable("book.pageIndicator", this.pageIndex + 1, this.getPageCount()); // create the page number indicator
         }
         this.cachedPageIndex = pageIndex;
 
         if (pageIndex < getPageCount()) {
             int pageIndexTextWidth = this.textRenderer.getWidth(this.pageIndexText); // get the page number indicator width
-            this.textRenderer.draw(matrices, this.pageIndexText, (float)(bookXPos - pageIndexTextWidth + WIDTH - 44), 18.0f, 0); // render the page number indicator
+            this.textRenderer.draw(matrices, this.pageIndexText, (float) (bookXPos - pageIndexTextWidth + WIDTH - 44), 18.0f, 0); // render the page number indicator
         }
 
         int numLines = Math.min(MAX_TEXT_HEIGHT / this.textRenderer.fontHeight, this.cachedPage.size()); // render the main content
         for (int line = 0; line < numLines; line++) {
-            this.textRenderer.draw(matrices, this.cachedPage.get(line), (float)(bookXPos + 36), (float)(32 + line * this.textRenderer.fontHeight), 0);
+            this.textRenderer.draw(matrices, this.cachedPage.get(line), (float) (bookXPos + 36), (float) (32 + line * this.textRenderer.fontHeight), 0);
         }
 
         Style style = this.getTextStyleAt(mouseX, mouseY); // render the text hover
@@ -150,8 +150,7 @@ public class BookScreen extends Screen {
                 int i = Integer.parseInt(string) - 1;
                 this.setPage(i);
                 return true;
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
                 return false;
             }
         }
@@ -169,7 +168,7 @@ public class BookScreen extends Screen {
             return null;
         }
 
-        int x = MathHelper.floor(mouseX - (double)((this.width - WIDTH) / 2) - 36.0); // get the mouse pos relative to the book
+        int x = MathHelper.floor(mouseX - (double) ((this.width - WIDTH) / 2) - 36.0); // get the mouse pos relative to the book
         int y = MathHelper.floor(mouseY - 32.0);
         if (x < 0 || y < 0) { // check if the mouse is in the book
             return null;

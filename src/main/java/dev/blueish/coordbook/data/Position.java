@@ -1,8 +1,13 @@
 package dev.blueish.coordbook.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Position {
+    @SerializedName("x")
     public int x;
+    @SerializedName("y")
     public int y;
+    @SerializedName("z")
     public int z;
 
     public Position(int x, int y, int z) {

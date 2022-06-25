@@ -1,5 +1,6 @@
 package dev.blueish.coordbook.gui;
 
+import dev.blueish.coordbook.CoordinateBook;
 import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.util.TextCreator;
 import net.fabricmc.api.EnvType;
@@ -68,6 +69,7 @@ public class ListScreen extends BookScreen {
         if (isIndividual) {
             boolean favorite = this.contents.getFavorite(this.pageIndex);
             this.favoriteButton.setMessage(new TextCreator(favorite ? "Remove favorite" : "Add favorite").format(favorite ? Formatting.RED : Formatting.GOLD).raw());
+            CoordinateBook.lastPage = this.pageIndex;
         }
     }
 }

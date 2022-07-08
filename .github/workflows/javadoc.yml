@@ -3,7 +3,7 @@ name: javadoc
 on: workflow_dispatch
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repository

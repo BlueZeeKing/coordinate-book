@@ -16,7 +16,7 @@ jobs:
         run: |
           git fetch origin gh-pages
           git checkout gh-pages
-          git merge main
+          git merge main --allow-unrelated-histories
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:

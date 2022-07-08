@@ -14,9 +14,11 @@ jobs:
           git config --local user.name "Github Actions"
       - name: Merge master -> gh-pages
         run: |
-          git fetch origin gh-pages
+          git fetch origin
+          git pull
           git checkout gh-pages
-          git merge main --allow-unrelated-histories
+          git pull
+          git merge main -X theirs --allow-unrelated-histories
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:

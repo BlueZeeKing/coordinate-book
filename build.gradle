@@ -77,4 +77,5 @@ publishing {
 
 javadoc {
 	source = sourceSets.main.allJava
+	destinationDir = file("${rootDir}/docs")
 }

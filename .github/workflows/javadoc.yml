@@ -16,7 +16,7 @@ jobs:
         run: |
           git fetch origin gh-pages
           git checkout gh-pages
-          git merge --no-ff master
+          git merge main
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:

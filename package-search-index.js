@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"dev.blueish.coordbook"},{"l":"dev.blueish.coordbook.data"},{"l":"dev.blueish.coordbook.gui"},{"l":"dev.blueish.coordbook.mixin"},{"l":"dev.blueish.coordbook.util"}];updateSearchResults();

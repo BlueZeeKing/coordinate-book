@@ -87,7 +87,7 @@ public class CoordinateBook implements ClientModInitializer {
                                         )
                                 )
                         )
-                )
+                ).build()
         );
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -111,7 +111,7 @@ public class CoordinateBook implements ClientModInitializer {
 
             while (send_coords.wasPressed()) {
                 if (client.player != null) {
-                    client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()));
+                    client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()), null);
                 }
             }
         });

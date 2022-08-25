@@ -6,9 +6,7 @@ import dev.blueish.coordbook.util.Config;
 import dev.blueish.coordbook.util.TextCreator;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.message.MessageSender;
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SignedMessage;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,22 +19,22 @@ import java.util.regex.Pattern;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Inject(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;onChatMessage(Lnet/minecraft/network/message/MessageType;Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSender;)V"), cancellable = true)
-    public void handleMessage(MessageType type, SignedMessage message, MessageSender sender, CallbackInfo ci) {
-        Matcher intial = Pattern.compile("(.*)Coordinate Book: ").matcher(message.getContent().getString());
-        String text = intial.replaceFirst("");
-        Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(message.getContent().getString());
+    @Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/message/MessageHandler;onChatMessage(Lnet/minecraft/network/message/SignedMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V"), cancellable = true)
+    public void handleMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
+        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher(packet.message().getContent().getString());
+        String text = initial.replaceFirst("");
+        Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(packet.message().getContent().getString());
 
-        intial.reset();
+        initial.reset();
 
         TextCreator newMessage = null;
 
-        if (intial.find() && Config.chatReplace) {
+        if (initial.find() && Config.chatReplace) {
             Matcher wName = Pattern.compile("(.*) - (-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(text);
             Matcher woName = Pattern.compile("(-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(text);
 
             if (wName.matches()) {
-                newMessage = new TextCreator(intial.group(1)).style(message.getContent().getStyle())
+                newMessage = new TextCreator(initial.group(1)).style(packet.message().getContent().getStyle())
                     .addNoFormat(new TextCreator("Coordinate Book: ").format(Formatting.BOLD).addNoFormat(wName.group(1))
                         .filler("-").addNoFormat(wName.group(2) + "/" + wName.group(3) + "/" + wName.group(4)))
                     .hover("Click to add")
@@ -49,7 +47,7 @@ public class ClientPlayNetworkHandlerMixin {
                         )
                     );
             } else if (woName.matches()) {
-                newMessage = new TextCreator(intial.group(1)).style(message.getContent().getStyle())
+                newMessage = new TextCreator(initial.group(1)).style(packet.message().getContent().getStyle())
                     .addNoFormat(new TextCreator("Coordinate Book: ").format(Formatting.BOLD)
                         .addNoFormat(woName.group(1) + "/" + woName.group(2) + "/" + woName.group(3)))
                     .hover("Click to add")
@@ -64,7 +62,7 @@ public class ClientPlayNetworkHandlerMixin {
                     );
             }
         } else if (anyCoords.find() && Config.allChatReplace) {
-            newMessage = new TextCreator(anyCoords.group(1)).style(message.getContent().getStyle())
+            newMessage = new TextCreator(anyCoords.group(1)).style(packet.message().getContent().getStyle())
                 .addNoFormat(
                     new TextCreator(String.format("%s/%s/%s", anyCoords.group(2), anyCoords.group(3), anyCoords.group(4)))
                         .format(Formatting.AQUA)
@@ -84,7 +82,7 @@ public class ClientPlayNetworkHandlerMixin {
         }
 
         if (newMessage != null) {
-            MinecraftClient.getInstance().inGameHud.onChatMessage(type, newMessage.raw(), sender);
+            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(newMessage.raw());
             ci.cancel();
         }
     }

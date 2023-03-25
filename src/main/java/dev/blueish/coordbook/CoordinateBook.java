@@ -67,29 +67,28 @@ public class CoordinateBook implements ClientModInitializer {
         // Proceed with mild caution.
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> ClientCommandManager.literal("coordbook").then(
-                        ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
-                                ClientCommandManager.argument("y", IntegerArgumentType.integer()).then(
-                                        ClientCommandManager.argument("z", IntegerArgumentType.integer()).then(
-                                                ClientCommandManager.argument("name", StringArgumentType.greedyString())
-                                                        .executes(context -> {
-                                                            int x = IntegerArgumentType.getInteger(context, "x");
-                                                            int y = IntegerArgumentType.getInteger(context, "y");
-                                                            int z = IntegerArgumentType.getInteger(context, "z");
-                                                            String name = StringArgumentType.getString(context, "name");
+          ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
+            ClientCommandManager.argument("y", IntegerArgumentType.integer()).then(
+              ClientCommandManager.argument("z", IntegerArgumentType.integer()).then(
+                ClientCommandManager.argument("name", StringArgumentType.greedyString())
+                  .executes(context -> {
+                      int x = IntegerArgumentType.getInteger(context, "x");
+                      int y = IntegerArgumentType.getInteger(context, "y");
+                      int z = IntegerArgumentType.getInteger(context, "z");
+                      String name = StringArgumentType.getString(context, "name");
 
-                                                            if (name.equals("coordinatebook-empty-this-is-too-long")) {
-                                                                MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z)));
-                                                            } else {
-                                                                MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z), name));
-                                                            }
+                      if (name.equals("coordinatebook-empty-this-is-too-long")) {
+                          MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z)));
+                      } else {
+                          MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z), name));
+                      }
 
-                                                            return 0;
-                                                        })
-                                        )
-                                )
-                        )
-                ).build()
-        );
+                      return 0;
+                  })
+              )
+            )
+          )
+        ).build());
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (book == null) {
@@ -112,7 +111,7 @@ public class CoordinateBook implements ClientModInitializer {
 
             while (send_coords.wasPressed()) {
                 if (client.player != null) {
-                    client.player.sendMessage(Text.of(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ())));
+                    client.player.networkHandler.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()));
                 }
             }
         });

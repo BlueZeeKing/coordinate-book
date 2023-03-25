@@ -16,15 +16,17 @@ public class CoordOverlay extends DrawableHelper {
 
     public void render(MatrixStack matrices) {
         MinecraftClient client = MinecraftClient.getInstance();
-        Coord coord = CoordinateBook.book.coordList.get(CoordinateBook.lastPage - CoordinateBook.book.listPageCount);
-        if (!coord.name.equals(lastName)) {
-            lastName = coord.name;
-            cachedText = new TextCreator(coord.name).format(Formatting.byName(coord.color) == Formatting.BLACK ? Formatting.WHITE : Formatting.byName(coord.color)).format(Formatting.BOLD).addNoFormat(new TextCreator(String.format(": %d/%d/%d", coord.coords.x, coord.coords.y, coord.coords.z)).format(Formatting.WHITE)).raw();
-        }
+        try {
+            Coord coord = CoordinateBook.book.coordList.get(CoordinateBook.lastPage - CoordinateBook.book.listPageCount);
+            if (!coord.name.equals(lastName)) {
+                lastName = coord.name;
+                cachedText = new TextCreator(coord.name).format(Formatting.byName(coord.color) == Formatting.BLACK ? Formatting.WHITE : Formatting.byName(coord.color)).format(Formatting.BOLD).addNoFormat(new TextCreator(String.format(": %d/%d/%d", coord.coords.x, coord.coords.y, coord.coords.z)).format(Formatting.WHITE)).raw();
+            }
 
-        int x = Config.xPos == Config.XPosition.RIGHT ? client.getWindow().getScaledWidth() - client.textRenderer.getWidth(cachedText) - 10 : 10;
-        int y = Config.yPos == Config.YPosition.BOTTOM ? client.getWindow().getScaledHeight() - client.textRenderer.fontHeight - 10 : 10;
+            int x = Config.xPos == Config.XPosition.RIGHT ? client.getWindow().getScaledWidth() - client.textRenderer.getWidth(cachedText) - 10 : 10;
+            int y = Config.yPos == Config.YPosition.BOTTOM ? client.getWindow().getScaledHeight() - client.textRenderer.fontHeight - 10 : 10;
 
-        client.textRenderer.draw(matrices, cachedText, x, y, Formatting.WHITE.getColorValue());
+            client.textRenderer.draw(matrices, cachedText, x, y, Formatting.WHITE.getColorValue());
+        } catch(IndexOutOfBoundsException ignored) {};
     }
 }

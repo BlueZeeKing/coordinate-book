@@ -22,8 +22,9 @@ import java.util.regex.Pattern;
 public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/message/MessageHandler;onChatMessage(Lnet/minecraft/network/message/SignedMessage;Lcom/mojang/authlib/GameProfile;Lnet/minecraft/network/message/MessageType$Parameters;)V"), cancellable = true)
     public void handleMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-        Text unsignedContent = packet.unsignedContent();
-        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher(unsignedContent.getString());
+
+        /*
+        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher();
         String text = initial.replaceFirst("");
         Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(unsignedContent.getString());
 
@@ -87,6 +88,7 @@ public class ClientPlayNetworkHandlerMixin {
             MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(newMessage.raw());
             ci.cancel();
         }
+        */
     }
 
     @Inject(method = "onGameJoin", at = @At("TAIL"))

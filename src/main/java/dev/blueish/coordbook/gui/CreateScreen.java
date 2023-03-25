@@ -14,6 +14,8 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.awt.*;
+
 @Environment(value = EnvType.CLIENT)
 public class CreateScreen extends BookScreen {
     private String name = "";
@@ -48,8 +50,19 @@ public class CreateScreen extends BookScreen {
 
     @Override
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 105, 196, 100, 20, ScreenTexts.CANCEL, (button) -> { this.client.setScreen(null); }));
-        this.addDrawableChild(new ButtonWidget(this.width / 2 + 5, 196, 100, 20, ScreenTexts.DONE, (button) -> { this.client.setScreen(null); if (nameEntry.getText() != "") { CoordinateBook.book.add(new Coord(pos, nameEntry.getText(), Formatting.byName(colorEntry.getText())  == null ? Formatting.BLACK : Formatting.byName(colorEntry.getText()).isColor() ? Formatting.byName(colorEntry.getText()) : Formatting.BLACK, this.client.player.getWorld().getRegistryKey().getValue().toString())); } }));
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> this.client.setScreen(null))
+            .position(this.width / 2 - 105, 196).size(100, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, this::addCoordinate)
+            .position(this.width / 2 + 5, 196).size(100, 20).build());
+    }
+
+    private void addCoordinate(ButtonWidget button) {
+        this.client.setScreen(null); 
+        if (nameEntry.getText() != "") {
+            CoordinateBook.book.add(new Coord(pos, nameEntry.getText(),
+                    Formatting.byName(colorEntry.getText())  == null ? Formatting.BLACK : Formatting.byName(colorEntry.getText()).isColor() ? Formatting.byName(colorEntry.getText()) : Formatting.BLACK,
+                    this.client.player.getWorld().getRegistryKey().getValue().toString()));
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,11 +20,12 @@ import java.util.regex.Pattern;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
-    @Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/message/MessageHandler;onChatMessage(Lnet/minecraft/network/message/SignedMessage;Lnet/minecraft/network/message/MessageType$Parameters;)V"), cancellable = true)
+    @Inject(method = "onChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/message/MessageHandler;onChatMessage(Lnet/minecraft/network/message/SignedMessage;Lcom/mojang/authlib/GameProfile;Lnet/minecraft/network/message/MessageType$Parameters;)V"), cancellable = true)
     public void handleMessage(ChatMessageS2CPacket packet, CallbackInfo ci) {
-        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher(packet.message().getContent().getString());
+        Text unsignedContent = packet.unsignedContent();
+        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher(unsignedContent.getString());
         String text = initial.replaceFirst("");
-        Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(packet.message().getContent().getString());
+        Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(unsignedContent.getString());
 
         initial.reset();
 
@@ -34,7 +36,7 @@ public class ClientPlayNetworkHandlerMixin {
             Matcher woName = Pattern.compile("(-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(text);
 
             if (wName.matches()) {
-                newMessage = new TextCreator(initial.group(1)).style(packet.message().getContent().getStyle())
+                newMessage = new TextCreator(initial.group(1)).style(unsignedContent.getStyle())
                     .addNoFormat(new TextCreator("Coordinate Book: ").format(Formatting.BOLD).addNoFormat(wName.group(1))
                         .filler("-").addNoFormat(wName.group(2) + "/" + wName.group(3) + "/" + wName.group(4)))
                     .hover("Click to add")
@@ -47,7 +49,7 @@ public class ClientPlayNetworkHandlerMixin {
                         )
                     );
             } else if (woName.matches()) {
-                newMessage = new TextCreator(initial.group(1)).style(packet.message().getContent().getStyle())
+                newMessage = new TextCreator(initial.group(1)).style(unsignedContent.getStyle())
                     .addNoFormat(new TextCreator("Coordinate Book: ").format(Formatting.BOLD)
                         .addNoFormat(woName.group(1) + "/" + woName.group(2) + "/" + woName.group(3)))
                     .hover("Click to add")
@@ -62,7 +64,7 @@ public class ClientPlayNetworkHandlerMixin {
                     );
             }
         } else if (anyCoords.find() && Config.allChatReplace) {
-            newMessage = new TextCreator(anyCoords.group(1)).style(packet.message().getContent().getStyle())
+            newMessage = new TextCreator(anyCoords.group(1)).style(unsignedContent.getStyle())
                 .addNoFormat(
                     new TextCreator(String.format("%s/%s/%s", anyCoords.group(2), anyCoords.group(3), anyCoords.group(4)))
                         .format(Formatting.AQUA)

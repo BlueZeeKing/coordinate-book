@@ -52,13 +52,10 @@ public class ListScreen extends BookScreen {
     }
 
     private void addDeleteButton() {
-        this.deleteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 135, 100, 20, new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> {
-            this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListPage));
-        }));
-        this.favoriteButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 55, 110, 100, 20, new TextCreator("Toggle favorite").format(Formatting.GOLD).raw(), button -> {
-            this.contents.toggleFavorite(this.pageIndex);
-            updateDeleteButton();
-        }));
+        this.deleteButton = this.addDrawableChild(ButtonWidget.builder(new TextCreator("DELETE").format(Formatting.BOLD).format(Formatting.RED).raw(), button -> this.client.setScreen(new ConfirmScreen(this.pageIndex, this.contents, this.lastListPage)))
+            .position(this.width / 2 - 55, 135).size(100, 20).build());
+        this.favoriteButton = this.addDrawableChild(ButtonWidget.builder(new TextCreator("Toggle favorite").format(Formatting.GOLD).raw(), button -> {this.contents.toggleFavorite(this.pageIndex); updateDeleteButton(); })
+            .position(this.width / 2 - 55, 110).size(100, 20).build());
         updateDeleteButton();
     }
 

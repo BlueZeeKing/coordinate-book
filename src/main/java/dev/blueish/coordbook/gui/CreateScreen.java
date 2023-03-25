@@ -13,6 +13,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
 
@@ -29,10 +30,21 @@ public class CreateScreen extends BookScreen {
         this.pos = pos;
     }
 
+    public CreateScreen(BlockPos pos) {
+        super();
+        this.pos = new Position(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     public CreateScreen(Position pos, String name) {
         super();
         this.name = name;
         this.pos = pos;
+    }
+
+    public CreateScreen(BlockPos pos, String name) {
+        super();
+        this.name = name;
+        this.pos = new Position(pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override

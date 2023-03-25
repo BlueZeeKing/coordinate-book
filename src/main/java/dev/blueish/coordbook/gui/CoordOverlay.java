@@ -27,6 +27,6 @@ public class CoordOverlay extends DrawableHelper {
             int y = Config.yPos == Config.YPosition.BOTTOM ? client.getWindow().getScaledHeight() - client.textRenderer.fontHeight - 10 : 10;
 
             client.textRenderer.draw(matrices, cachedText, x, y, Formatting.WHITE.getColorValue());
-        } catch(IndexOutOfBoundsException ignored) {};
+        } catch(IndexOutOfBoundsException ignored) {} //There was a strange crash on servers where you hadn't saved any coords.]
     }
 }

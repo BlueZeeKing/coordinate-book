@@ -1,5 +1,6 @@
 package dev.blueish.coordbook;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.blueish.coordbook.data.Book;
@@ -7,21 +8,29 @@ import dev.blueish.coordbook.data.Position;
 import dev.blueish.coordbook.gui.CreateScreen;
 import dev.blueish.coordbook.gui.ListScreen;
 import dev.blueish.coordbook.util.Config;
+import dev.xpple.clientarguments.arguments.CBlockPosArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.text.Text;
 import net.minecraft.util.WorldSavePath;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 
 public class CoordinateBook implements ClientModInitializer {
@@ -66,29 +75,7 @@ public class CoordinateBook implements ClientModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> ClientCommandManager.literal("coordbook").then(
-          ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
-            ClientCommandManager.argument("y", IntegerArgumentType.integer()).then(
-              ClientCommandManager.argument("z", IntegerArgumentType.integer()).then(
-                ClientCommandManager.argument("name", StringArgumentType.greedyString())
-                  .executes(context -> {
-                      int x = IntegerArgumentType.getInteger(context, "x");
-                      int y = IntegerArgumentType.getInteger(context, "y");
-                      int z = IntegerArgumentType.getInteger(context, "z");
-                      String name = StringArgumentType.getString(context, "name");
-
-                      if (name.equals("coordinatebook-empty-this-is-too-long")) {
-                          MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z)));
-                      } else {
-                          MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z), name));
-                      }
-
-                      return 0;
-                  })
-              )
-            )
-          )
-        ).build());
+        ClientCommandRegistrationCallback.EVENT.register(this::registerCommands);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (book == null) {
@@ -115,5 +102,23 @@ public class CoordinateBook implements ClientModInitializer {
                 }
             }
         });
+    }
+
+    private void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+
+        dispatcher.register(literal("coordbook")
+            .then(argument("pos", CBlockPosArgumentType.blockPos())
+                .then(argument("name", StringArgumentType.greedyString())
+                    .executes(ctx -> {
+                      String name = StringArgumentType.getString(ctx, "name");
+                      BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
+                      LOGGER.info(pos.toString());
+                      if (name.equals("coordinatebook-empty-this-is-too-long")) {
+                          MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new CreateScreen(pos)));
+                      } else {
+                          MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new CreateScreen(pos, name)));
+                      }
+                      return 0;
+                    }))));
     }
 }

@@ -56,7 +56,7 @@ public class Coord {
             ).addNewline(
                 new TextCreator("\n\n\n")
                     .addNewline(
-                        new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").say(
+                        new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").suggest(
                                 String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
                             )
                             .addNoFormat("  ")

@@ -28,6 +28,10 @@ repositories {
 			includeGroup "maven.modrinth"
 		}
 	}
+
+	maven {
+		url 'https://maven.xpple.dev/maven2'
+	}
 }
 
 dependencies {
@@ -39,8 +43,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "maven.modrinth:midnightlib:${midnightlib_version}"
-	include "maven.modrinth:midnightlib:${midnightlib_version}"
+	include modImplementation("maven.modrinth:midnightlib:${project.midnightlib_version}")
+	include modImplementation("dev.xpple:clientarguments:${project.clientargs_version}")
 }
 
 processResources {

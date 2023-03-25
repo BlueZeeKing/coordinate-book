@@ -81,8 +81,8 @@ public class TextCreator {
         return this;
     }
 
-    public TextCreator say(String command) {
-        text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/say " + command)));
+    public TextCreator suggest(String command) {
+        text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
         return this;
     }
 

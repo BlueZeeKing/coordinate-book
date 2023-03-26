@@ -56,7 +56,7 @@ public class Coord {
             ).addNewline(
                 new TextCreator("\n\n\n")
                     .addNewline(
-                        new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").suggest(
+                        new TextCreator("Send").format(Formatting.BLUE).hover("Send to all players").command(
                                 String.format("Coordinate Book: %s - %d/%d/%d", name, coords.x, coords.y, coords.z)
                             )
                             .addNoFormat("  ")
@@ -71,10 +71,10 @@ public class Coord {
     }
 
     private String convert(String input) {
-        CoordinateBook.LOGGER.info(input);
+        //CoordinateBook.LOGGER.info(input);
         Matcher regex = Pattern.compile(".*?:(?:the_)*(.).*").matcher(input);
         if (regex.matches()) {
-            CoordinateBook.LOGGER.info("Match");
+            //CoordinateBook.LOGGER.info("Match");
             return regex.group(1).toUpperCase();
         }
         return "O";

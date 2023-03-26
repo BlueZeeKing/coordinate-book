@@ -2,6 +2,7 @@ package dev.blueish.coordbook.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.blueish.coordbook.CoordinateBook;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
@@ -13,9 +14,13 @@ import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BookScreen extends Screen {
     private final Identifier BOOK_TEXTURE = new Identifier("textures/gui/book.png");
@@ -142,7 +147,7 @@ public class BookScreen extends Screen {
             return false;
         }
 
-        CoordinateBook.LOGGER.info("click");
+        //CoordinateBook.LOGGER.info("click");
 
         if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
             String string = clickEvent.getValue();
@@ -156,9 +161,12 @@ public class BookScreen extends Screen {
         }
 
         boolean returnValue = super.handleTextClick(style);
+
         if (returnValue && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
+            MinecraftClient.getInstance().getNetworkHandler().sendChatMessage(clickEvent.getValue());
             this.client.setScreen(null);
         }
+
         return returnValue;
     }
 

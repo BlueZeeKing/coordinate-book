@@ -6,8 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "ClientPlayNetworkHandlerMixin",
-    "InGameHudMixin"
+    "ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

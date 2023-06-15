@@ -26,18 +26,11 @@ jobs:
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
+      - name: Create hash
+        uses: BlueZeeKing/fabric-mod-hash@v1
       - name: Upload assets to GitHub
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'build/libs/*.jar;!build/libs/*-dev.jar'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Generate Release Hashes
-        uses: MCJack123/ghaction-Generate-Release-Hashes@v4
-        with:
-          file-name: hashes.txt
-      - name: Upload assets to GitHub
-        uses: AButler/upload-release-assets@v2.0
-        with:
-          files: 'hashes.txt'
+          files: 'build/libs/*.jar;!build/libs/*-dev.jar;*.sha512'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 

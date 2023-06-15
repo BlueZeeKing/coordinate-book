@@ -34,7 +34,7 @@ jobs:
       - name: Generate Release Hashes
         uses: MCJack123/ghaction-Generate-Release-Hashes@v4
         with:
-          - file-name: hashes.txt
+          file-name: hashes.txt
       - name: Upload assets to GitHub
         uses: AButler/upload-release-assets@v2.0
         with:

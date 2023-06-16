@@ -1,36 +1,35 @@
 name: publish
 
 on:
-  release:
-     types:
-       - published
+  push:
+     tags:
+       - "v*.*.*"
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: [ 17 ]
-        os: [ubuntu-20.04]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: setup jdk ${{ matrix.java }}
+      - name: setup jdk
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 17
       - name: make gradle wrapper executable
-        if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
       - name: Create hash
         uses: BlueZeeKing/fabric-mod-hash@v1.1
-      - name: Upload assets to GitHub
-        uses: BlueZeeKing/upload-release-assets@v1.1
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          files: './build/libs/*.jar;!./build/libs/*-dev.jar;./*.sha512;!./build/libs/*-sources.jar'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          files: |
+            ./build/libs/*.jar
+            !./build/libs/*-dev.jar
+            !./build/libs/*-sources.jar
+            ./*.sha512
+          draft: true
 

@@ -17,7 +17,7 @@ public class Book {
 
     public Book() {
         Coord[] arr = JSONFile.read(CoordinateBook.clientToName());
-        CoordinateBook.LOGGER.info(String.valueOf(arr));
+        //CoordinateBook.LOGGER.info(String.valueOf(arr));
         arr = arr != null ? arr : new Coord[0];
         this.coordList = new ArrayList<>(List.of(arr));
 
@@ -101,7 +101,7 @@ public class Book {
     public void add(Coord coord) {
         this.coordList.add(coord);
 
-        CoordinateBook.LOGGER.info(String.valueOf(coordList));
+        //CoordinateBook.LOGGER.info(String.valueOf(coordList));
 
         regen();
     }

@@ -1,26 +1,50 @@
 package dev.blueish.coordbook;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import dev.blueish.coordbook.data.Book;
 import dev.blueish.coordbook.data.Position;
+import dev.blueish.coordbook.gui.CoordOverlay;
 import dev.blueish.coordbook.gui.CreateScreen;
 import dev.blueish.coordbook.gui.ListScreen;
 import dev.blueish.coordbook.util.Config;
+import dev.blueish.coordbook.util.TextCreator;
+import dev.xpple.clientarguments.arguments.CBlockPosArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SignedMessage;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.WorldSavePath;
+import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 
 public class CoordinateBook implements ClientModInitializer {
@@ -41,6 +65,8 @@ public class CoordinateBook implements ClientModInitializer {
             return "global";
         }
     }
+
+    public CoordOverlay overlay = new CoordOverlay();
 
     @Override
     public void onInitializeClient() {
@@ -65,30 +91,11 @@ public class CoordinateBook implements ClientModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> ClientCommandManager.literal("coordbook").then(
-                        ClientCommandManager.argument("x", IntegerArgumentType.integer()).then(
-                                ClientCommandManager.argument("y", IntegerArgumentType.integer()).then(
-                                        ClientCommandManager.argument("z", IntegerArgumentType.integer()).then(
-                                                ClientCommandManager.argument("name", StringArgumentType.greedyString())
-                                                        .executes(context -> {
-                                                            int x = IntegerArgumentType.getInteger(context, "x");
-                                                            int y = IntegerArgumentType.getInteger(context, "y");
-                                                            int z = IntegerArgumentType.getInteger(context, "z");
-                                                            String name = StringArgumentType.getString(context, "name");
+        HudRenderCallback.EVENT.register(this::renderHUD);
 
-                                                            if (name.equals("coordinatebook-empty-this-is-too-long")) {
-                                                                MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z)));
-                                                            } else {
-                                                                MinecraftClient.getInstance().setScreen(new CreateScreen(new Position(x, y, z), name));
-                                                            }
+        ClientReceiveMessageEvents.CHAT.register(this::chatListener);
 
-                                                            return 0;
-                                                        })
-                                        )
-                                )
-                        )
-                ).build()
-        );
+        ClientCommandRegistrationCallback.EVENT.register(this::registerCommands);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (book == null) {
@@ -111,9 +118,94 @@ public class CoordinateBook implements ClientModInitializer {
 
             while (send_coords.wasPressed()) {
                 if (client.player != null) {
-                    client.player.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()), null);
+                    client.player.networkHandler.sendChatMessage(String.format("Coordinate Book: %d/%d/%d", (int) client.player.getX(), (int) client.player.getY(), (int) client.player.getZ()));
                 }
             }
         });
+    }
+
+    private void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+
+        dispatcher.register(literal("coordbook")
+            .then(argument("pos", CBlockPosArgumentType.blockPos())
+                .then(argument("name", StringArgumentType.greedyString())
+                    .executes(ctx -> {
+                      String name = StringArgumentType.getString(ctx, "name");
+                      BlockPos pos = CBlockPosArgumentType.getCBlockPos(ctx, "pos");
+                      if (name.equals("coordinatebook-empty-this-is-too-long")) {
+                          MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new CreateScreen(pos)));
+                      } else {
+                          MinecraftClient.getInstance().send(() -> MinecraftClient.getInstance().setScreen(new CreateScreen(pos, name)));
+                      }
+                      return 0;
+                    }))));
+    }
+
+    private void renderHUD(MatrixStack matrixStack, float v) {
+        if (CoordinateBook.lastPage > 0 && Config.overlay) {
+            overlay.render(matrixStack);
+        }
+    }
+
+    private void chatListener(Text text, @Nullable SignedMessage signedMessage, @Nullable GameProfile gameProfile, MessageType.Parameters parameters, Instant instant) {
+        String originalMessage = text.getString();
+
+        Matcher initial = Pattern.compile("(.*)Coordinate Book: ").matcher(originalMessage);
+        String message = initial.replaceFirst("");
+        Matcher anyCoords = Pattern.compile("(.*?)(-?\\d+)[ \\-/]+?(-?\\d+)[ \\-/]+?(-?\\d+)(.*)").matcher(originalMessage);
+
+        initial.reset();
+
+        TextCreator newMessage = null;
+
+        if (initial.find() && Config.chatReplace) {
+            Matcher wName = Pattern.compile("(.*) - (-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(message);
+            Matcher woName = Pattern.compile("(-?\\d+)/(-?\\d+)/(-?\\d+)").matcher(message);
+
+            if (wName.matches()) {
+                newMessage = new TextCreator("[Add coordinate to the book]")
+                    .format(Formatting.AQUA)
+                    .format(Formatting.BOLD)
+                    .hover("Click to add")
+                    .command(String.format(
+                            "/coordbook %d %d %d %s",
+                            Integer.parseInt(wName.group(2)),
+                            Integer.parseInt(wName.group(3)),
+                            Integer.parseInt(wName.group(4)),
+                            wName.group(1)
+                        )
+                    );
+            } else if (woName.matches()) {
+                newMessage = new TextCreator("[Add coordinate to the book]")
+                    .format(Formatting.AQUA)
+                    .format(Formatting.BOLD)
+                    .hover("Click to add")
+                    .command(String.format(
+                            "/coordbook %d %d %d %s",
+                            Integer.parseInt(woName.group(1)),
+                            Integer.parseInt(woName.group(2)),
+                            Integer.parseInt(woName.group(3)),
+                            "coordinatebook-empty-this-is-too-long"
+                        )
+                    );
+            }
+        } else if (anyCoords.find() && Config.allChatReplace) {
+            newMessage = new TextCreator("[Add coordinate to the book]")
+                        .format(Formatting.AQUA)
+                        .format(Formatting.BOLD)
+                        .hover("Click to add")
+                        .command(String.format(
+                                "/coordbook %d %d %d %s",
+                                Integer.parseInt(anyCoords.group(2)),
+                                Integer.parseInt(anyCoords.group(3)),
+                                Integer.parseInt(anyCoords.group(4)),
+                                "coordinatebook-empty-this-is-too-long")
+                        );
+        }
+
+        if (newMessage != null) {
+            text = newMessage.raw();
+            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(newMessage.raw());
+        }
     }
 }

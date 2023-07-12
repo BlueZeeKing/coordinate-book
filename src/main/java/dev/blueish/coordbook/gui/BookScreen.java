@@ -2,6 +2,7 @@ package dev.blueish.coordbook.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.blueish.coordbook.CoordinateBook;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
@@ -13,9 +14,13 @@ import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BookScreen extends Screen {
     private final Identifier BOOK_TEXTURE = new Identifier("textures/gui/book.png");
@@ -43,7 +48,7 @@ public class BookScreen extends Screen {
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, button -> this.client.setScreen(null)));
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.client.setScreen(null)).position(this.width / 2 - 100, 196).size(200, 20).build());
     }
 
     protected void addPageButtons() {
@@ -95,7 +100,7 @@ public class BookScreen extends Screen {
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices); // render the background
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BOOK_TEXTURE);
 
@@ -142,7 +147,7 @@ public class BookScreen extends Screen {
             return false;
         }
 
-        CoordinateBook.LOGGER.info("click");
+        //CoordinateBook.LOGGER.info("click");
 
         if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
             String string = clickEvent.getValue();
@@ -156,9 +161,12 @@ public class BookScreen extends Screen {
         }
 
         boolean returnValue = super.handleTextClick(style);
+
         if (returnValue && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
+            MinecraftClient.getInstance().getNetworkHandler().sendChatMessage(clickEvent.getValue());
             this.client.setScreen(null);
         }
+
         return returnValue;
     }
 

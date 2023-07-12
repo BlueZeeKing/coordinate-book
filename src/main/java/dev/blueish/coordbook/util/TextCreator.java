@@ -76,8 +76,13 @@ public class TextCreator {
         return this;
     }
 
-    public TextCreator send(String command) {
+    public TextCreator command(String command) {
         text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)));
+        return this;
+    }
+
+    public TextCreator suggest(String command) {
+        text.styled(s -> s.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)));
         return this;
     }
 

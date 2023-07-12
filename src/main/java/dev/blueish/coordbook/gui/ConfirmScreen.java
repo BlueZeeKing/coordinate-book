@@ -24,16 +24,18 @@ public class ConfirmScreen extends BookScreen {
 
     @Override
     protected void init() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 60, 60, 50, 20, new TextCreator("Cancel").format(Formatting.GRAY).raw(), (button) -> this.client.setScreen(new ListScreen(book, index))));
-        this.addDrawableChild(new ButtonWidget(this.width / 2, 60, 50, 20, new TextCreator("Confirm").format(Formatting.RED).raw(), (button) -> {
-            book.delete(index);
-            this.client.setScreen(new ListScreen(book, returnIndex));
-        }));
+        this.addDrawableChild(
+            ButtonWidget.builder(new TextCreator("Cancel").format(Formatting.GRAY).raw(), (button) -> this.client.setScreen(new ListScreen(book, index)))
+                .position(this.width / 2 - 60, 60).size(50, 20).build());
+        this.addDrawableChild(
+            ButtonWidget.builder(new TextCreator("Confirm").format(Formatting.RED).raw(), (button) -> { book.delete(index); this.client.setScreen(new ListScreen(book, returnIndex)); })
+                .position(this.width / 2, 60).size(50, 20).build());
         this.addCloseButton();
     }
 
     protected void addCloseButton() {
-        this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (button) -> this.client.setScreen(new ListScreen(book, index))));
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> this.client.setScreen(new ListScreen(book, index)))
+            .position(this.width / 2 - 100, 196).size(200, 20).build());
     }
 
     @Override
